@@ -48,6 +48,10 @@ namespace PatchClient.ViewModels
         {
             Task.Run(() =>
             {
+                //Slight delay to avoid some weird race condition in avalonia core, seems to be a bug, but also maybe I'm just stupid, idk -waffle
+                //Error without delay: An item with the same key has already been added. Key: [1, Avalonia.Controls.Generators.ItemContainerInfo]
+                System.Threading.Thread.Sleep(1000);
+
                 PatchHelper patcher = new PatchHelper(Environment.CurrentDirectory, null, LazyOperations.PatchFolder);
 
                 patcher.ProgressChanged += patcher_ProgressChanged;

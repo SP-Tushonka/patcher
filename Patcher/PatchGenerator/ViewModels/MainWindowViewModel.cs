@@ -17,11 +17,24 @@ namespace PatchGenerator.ViewModels
         });
 
         public ViewNavigator navigator { get; set; } = new ViewNavigator();
-        public MainWindowViewModel()
+        public MainWindowViewModel(GenStartupArgs genArgs = null)
         {
-            navigator.SelectedViewModel = new OptionsViewModel();
-
             Locator.CurrentMutable.RegisterConstant(navigator, typeof(ViewNavigator));
+
+            if (genArgs != null && genArgs.ReadyToRun)
+            {
+                PatchGenInfo genInfo = new PatchGenInfo();
+
+                genInfo.TargetFolderPath = genArgs.TargetFolderPath;
+                genInfo.SourceFolderPath = genArgs.SourceFolderPath;
+                genInfo.PatchName = genArgs.OutputFolderName;
+                genInfo.AutoZip = genArgs.AutoZip;
+
+                navigator.SelectedViewModel = new PatchGenerationViewModel(genInfo);
+                return;
+            }
+
+            navigator.SelectedViewModel = new OptionsViewModel();
         }
     }
 }

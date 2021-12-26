@@ -9,14 +9,8 @@ namespace PatchGenerator.ViewModels
 
         private ViewNavigator navigator => Locator.Current.GetService<ViewNavigator>();
 
-        public OptionsViewModel(GenStartupArgs genArgs = null)
+        public OptionsViewModel()
         {
-            if (genArgs != null)
-            {
-                //TODO - parse/check startup args and start patching
-                return;
-            }
-
             GenerationInfo.SourceFolderPath = "Drop SOURCE folder here";
             GenerationInfo.TargetFolderPath = "Drop TARGET folder here";
         }

@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PatchClient.CustomControls.TitleBar">
+             x:Class="PatchGenerator.CustomControls.TitleBar">
 
   <Grid ColumnDefinitions="AUTO,*,AUTO">
     <Rectangle Grid.ColumnSpan="3" IsHitTestVisible="False"
@@ -18,7 +18,7 @@
            Background="Transparent"
            VerticalContentAlignment="Center"
 			     />
-    <Button Content="X" Grid.Column="2"
+    <Button Content="&#xE106;" Grid.Column="2"
             Foreground="{Binding XButtonForeground, RelativeSource={
 												 RelativeSource AncestorType=UserControl}}"
             Command="{Binding XButtonCommand, RelativeSource={
@@ -27,6 +27,7 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             VerticalAlignment="Stretch"
+            FontFamily="Segoe MDL2 Assets"
             CornerRadius="0"
             Width="35"
             >

@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
 using PatcherUtils;
 using PatchGenerator.Helpers;
 using PatchGenerator.Models;
@@ -62,11 +63,12 @@ namespace PatchGenerator.ViewModels
             Task.Run(() =>
             {
                 //Slight delay to avoid some weird race condition in avalonia core, seems to be a bug, but also maybe I'm just stupid, idk -waffle
-                System.Threading.Thread.Sleep(200);
+                //Error without delay: An item with the same key has already been added. Key: [1, Avalonia.Controls.Generators.ItemContainerInfo]
+                System.Threading.Thread.Sleep(1000);
 
-                string outputFolder = Path.Join(LazyOperations.PatchFolder, generationInfo.PatchName);
+                string patchOutputFolder = Path.Join(generationInfo.PatchName.FromCwd(), LazyOperations.PatchFolder);
 
-                PatchHelper patcher = new PatchHelper(generationInfo.SourceFolderPath, generationInfo.TargetFolderPath, outputFolder);
+                PatchHelper patcher = new PatchHelper(generationInfo.SourceFolderPath, generationInfo.TargetFolderPath, patchOutputFolder);
 
                 patcher.ProgressChanged += Patcher_ProgressChanged;
 
@@ -84,10 +86,11 @@ namespace PatchGenerator.ViewModels
 
                 ProgressMessage = sb.ToString();
 
-                //TODO - need to fix this. Wrong folder, and need to copy client to output
+                File.Copy(LazyOperations.PatcherClientPath, $"{generationInfo.PatchName.FromCwd()}\\patcher.exe", true);
+
                 if (generationInfo.AutoZip)
                 {
-                    LazyOperations.StartZipProcess(outputFolder, $"{outputFolder}.zip");
+                    LazyOperations.StartZipProcess(generationInfo.PatchName.FromCwd(), $"{generationInfo.PatchName}.zip".FromCwd());
                 }
             });
         }
@@ -99,6 +102,30 @@ namespace PatchGenerator.ViewModels
             PatchPercent = Percent;
 
             PatchItemCollection.Add(new PatchItem(Message));
+
+            if(Percent == 100)
+            {
+                if (Application.Current.Resources.TryGetResource("AKI_Brush_Yellow", out var color))
+                {
+                    if (color is IBrush brush)
+                    {
+                        PatchItemCollection.Add(new PatchItem("")
+                        {
+                            Name = new StringBuilder().AppendLine("Summary").AppendLine("----------").ToString(),
+                            Color = brush
+                        });
+
+                        foreach (LineItem item in AdditionalLineItems)
+                        {
+                            PatchItemCollection.Add(new PatchItem("")
+                            {
+                                Name = $"{item.ItemText}: {item.ItemValue}",
+                                Color = brush
+                            });
+                        }
+                    }
+                }
+            }
         }
     }
 

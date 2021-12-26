@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using PatchGenerator.Models;
 using PatchGenerator.ViewModels;
 using PatchGenerator.Views;
 
@@ -17,13 +18,23 @@ namespace PatchGenerator
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(),
-                };
+                desktop.Startup += Desktop_Startup;
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private void Desktop_Startup(object? sender, ControlledApplicationLifetimeStartupEventArgs e)
+        {
+            if (sender is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                GenStartupArgs genArgs = GenStartupArgs.Parse(e.Args);
+
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = new MainWindowViewModel(genArgs)
+                };
+            }
         }
     }
 }
