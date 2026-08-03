@@ -2,12 +2,12 @@
 using PatcherUtils.Model;
 using SharpHDiffPatch.Core;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -93,12 +93,12 @@ namespace PatcherUtils
         }
 
         /// <summary>
-        /// Check if two files have the same MD5 hash
+        /// Check if two files hold identical bytes
         /// </summary>
         /// <param name="SourceFilePath"></param>
         /// <param name="TargetFilePath"></param>
-        /// <returns>True if the hashes match</returns>
-        private bool CompareFileHashes(string SourceFilePath, string TargetFilePath)
+        /// <returns>True if the contents match</returns>
+        private bool CompareFileContents(string SourceFilePath, string TargetFilePath)
         {
             var sourceInfo = new FileInfo(SourceFilePath);
             var targetInfo = new FileInfo(TargetFilePath);
@@ -109,19 +109,49 @@ namespace PatcherUtils
                 return false;
             }
 
-            using (MD5 md5Service = MD5.Create())
-            using (var sourceStream = File.OpenRead(SourceFilePath))
-            using (var targetStream = File.OpenRead(TargetFilePath))
+            bool matched = ContentsEqual(SourceFilePath, TargetFilePath);
+
+            PatchLogger.LogInfo(
+                $"Content Check: S({sourceInfo.Name}) - T({targetInfo.Name}) - Match:{matched}");
+
+            return matched;
+        }
+
+        // Comparing directly beats hashing here: it stops at the first difference, and an exact
+        // answer removes any chance of a collision marking a changed file as unchanged.
+        private static bool ContentsEqual(string SourceFilePath, string TargetFilePath)
+        {
+            const int BufferSize = 128 * 1024;
+
+            using var sourceStream = File.OpenRead(SourceFilePath);
+            using var targetStream = File.OpenRead(TargetFilePath);
+
+            byte[] sourceBuffer = ArrayPool<byte>.Shared.Rent(BufferSize);
+            byte[] targetBuffer = ArrayPool<byte>.Shared.Rent(BufferSize);
+
+            try
             {
-                byte[] sourceHash = md5Service.ComputeHash(sourceStream);
-                byte[] targetHash = md5Service.ComputeHash(targetStream);
+                while (true)
+                {
+                    int read = sourceStream.ReadAtLeast(sourceBuffer, BufferSize, throwOnEndOfStream: false);
 
-                bool matched = Enumerable.SequenceEqual(sourceHash, targetHash);
+                    if (read == 0)
+                    {
+                        return true;
+                    }
 
-                PatchLogger.LogInfo(
-                    $"Hash Check: S({sourceInfo.Name}|{Convert.ToBase64String(sourceHash)}) - T({targetInfo.Name}|{Convert.ToBase64String(targetHash)}) - Match:{matched}");
+                    targetStream.ReadExactly(targetBuffer, 0, read);
 
-                return matched;
+                    if (!sourceBuffer.AsSpan(0, read).SequenceEqual(targetBuffer.AsSpan(0, read)))
+                    {
+                        return false;
+                    }
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sourceBuffer);
+                ArrayPool<byte>.Shared.Return(targetBuffer);
             }
         }
 
@@ -355,7 +385,7 @@ namespace PatcherUtils
 
                         // if a matching source file was found, check the file hashes and get the delta.
                         // add it to the bag for removal later
-                        if (!CompareFileHashes(sourceFile.FullName, targetFile.FullName))
+                        if (!CompareFileContents(sourceFile.FullName, targetFile.FullName))
                         {
                             foundFilesQueue.Enqueue(sourceFile);
                             PatchLogger.LogInfo("::: Creating .delta file :::");

@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace PatcherUtils.Model
 {
     public static class PatchLogger
     {
-        private static readonly object WriteLock = new object();
+        private static readonly Lock WriteLock = new Lock();
 
         /// <summary>
         /// Resolved once on first use, so it is fixed to the working directory at that moment.
