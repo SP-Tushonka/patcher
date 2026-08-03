@@ -7,12 +7,16 @@
         public string SourceFolderPath { get; private set; } = "";
         public string TargetFolderPath { get; private set; } = "";
         public bool AutoClose { get; private set; } = false;
-        protected GenStartupArgs(string outputFolderName, string sourceFolderPath, string targetFolderPath, bool autoClose)
+
+        public bool Headless { get; private set; } = false;
+
+        protected GenStartupArgs(string outputFolderName, string sourceFolderPath, string targetFolderPath, bool autoClose, bool headless)
         {
             OutputFolderName = outputFolderName;
             SourceFolderPath = sourceFolderPath;
             TargetFolderPath = targetFolderPath;
             AutoClose = autoClose;
+            Headless = headless;
         }
 
         public static GenStartupArgs Parse(string[] Args)
@@ -23,6 +27,7 @@
             string sourceFolderPath = "";
             string targetFolderPath = "";
             bool autoClose = false;
+            bool headless = false;
 
             foreach (string arg in Args)
             {
@@ -52,10 +57,15 @@
                             autoClose = bool.Parse(argSplit[1]);
                             break;
                         }
+                    case "headless":
+                        {
+                            headless = bool.Parse(argSplit[1]);
+                            break;
+                        }
                 }
             }
 
-            return new GenStartupArgs(outputFolderPath, sourceFolderPath, targetFolderPath, autoClose);
+            return new GenStartupArgs(outputFolderPath, sourceFolderPath, targetFolderPath, autoClose, headless);
         }
     }
 }

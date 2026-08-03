@@ -102,19 +102,12 @@ namespace PatchGenerator.ViewModels
         {
             Task.Run(() =>
             {
-                string patchOutputFolder = Path.Join(generationInfo.PatchName.FromCwd(), LazyOperations.PatchFolder);
-
-                LazyOperations.ExtractResourcesToTempDir(Assembly.GetExecutingAssembly());
-
-                PatchHelper patcher = new PatchHelper(generationInfo.SourceFolderPath, generationInfo.TargetFolderPath, patchOutputFolder);
-
-                patcher.ProgressChanged += Patcher_ProgressChanged;
-
                 updateElapsedTimeTimer.Start();
                 patchGenStopwatch.Start();
 
-                var message = patcher.GeneratePatches();
-                
+                var message = PatchGeneration.Run(generationInfo.SourceFolderPath,
+                    generationInfo.TargetFolderPath, generationInfo.PatchName, Patcher_ProgressChanged);
+
                 patchGenStopwatch.Stop();
                 updateElapsedTimeTimer.Stop();
 
@@ -135,10 +128,8 @@ namespace PatchGenerator.ViewModels
 
                 ProgressMessage = sb.ToString();
 
-                File.Copy(LazyOperations.PatcherClientPath, $"{generationInfo.PatchName.FromCwd()}\\patcher.exe", true);
-                
-                PatchLogger.LogInfo("Copied patcher.exe to output folder");
-                
+                PatchGeneration.CopyPatchClient(generationInfo.PatchName);
+
                 if (generationInfo.AutoClose)
                 {
                     Environment.Exit((int)PatcherExitCode.Success);
