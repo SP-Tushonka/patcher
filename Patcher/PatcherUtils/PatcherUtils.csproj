@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\7z.dll" />
     <EmbeddedResource Include="Resources\hdiffz.exe" />
     <EmbeddedResource Include="Resources\hdiffz" />
   </ItemGroup>
@@ -20,7 +19,6 @@
 
   <ItemGroup>
     <PackageReference Include="SharpHDiffPatch.Core" Version="2.2.8" />
-    <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.6.2.24" />
   </ItemGroup>
 
 </Project>
