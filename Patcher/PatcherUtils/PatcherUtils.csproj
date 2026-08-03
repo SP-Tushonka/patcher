@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpHDiffPatch.Core" Version="2.2.8" />
+    <PackageReference Include="SharpHDiffPatch.Core" Version="2.4.0" />
   </ItemGroup>
 
 </Project>

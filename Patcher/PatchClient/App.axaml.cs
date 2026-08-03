@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using PatchClient.ViewModels;
 using PatchClient.Views;
 using ReactiveUI;
-using System.Reactive;
+using ReactiveUI.Primitives;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -17,11 +17,6 @@ namespace PatchClient
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>((exception) =>
-            {
-                PatchLogger.LogException(exception);
-            });
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -51,9 +46,14 @@ namespace PatchClient
                 
                 PatchLogger.LogInfo($"Patch Client v{version?.ToString() ?? "N/A"}");
 
+                MainWindowViewModel viewModel = new MainWindowViewModel(autoClose, debugOutput);
+
+                // ViewModel as well as DataContext: ReactiveUI no longer syncs the two, and without
+                // it the view model never activates, so the router never navigates.
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(autoClose, debugOutput),
+                    DataContext = viewModel,
+                    ViewModel = viewModel
                 };
             }
 

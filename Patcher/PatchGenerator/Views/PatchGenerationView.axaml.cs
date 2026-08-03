@@ -1,6 +1,7 @@
+using ReactiveUI.Primitives.Disposables;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using PatchGenerator.AttachedProperties;
 using PatchGenerator.ViewModels;
 using ReactiveUI;
@@ -16,7 +17,7 @@ namespace PatchGenerator.Views
 
         private void InitializeComponent()
         {
-            this.WhenActivated(disposables => { });
+            this.WhenActivated((MultipleDisposable disposables) => { });
             AvaloniaXamlLoader.Load(this);
         }
 

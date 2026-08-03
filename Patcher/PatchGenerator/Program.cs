@@ -1,5 +1,6 @@
+using PatcherUtils.Model;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Splat;
 using System;
 using ReactiveUI;
@@ -39,10 +40,12 @@ namespace PatchGenerator
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
-            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
-
             return AppBuilder.Configure<App>()
-                .UseReactiveUI()
+                .UseReactiveUI(builder => builder
+                    .WithExceptionHandler(new LoggingExceptionObserver())
+                    // RoutedViewHost resolves through these; there is no assembly scan in ReactiveUI 24.
+                    .RegisterView<Views.OptionsView, ViewModels.OptionsViewModel>()
+                    .RegisterView<Views.PatchGenerationView, ViewModels.PatchGenerationViewModel>())
                 .UsePlatformDetect()
                 .LogToTrace();
         }

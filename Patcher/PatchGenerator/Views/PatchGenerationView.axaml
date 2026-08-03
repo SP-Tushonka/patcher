@@ -6,7 +6,9 @@
              xmlns:cc="using:PatchGenerator.CustomControls"
              xmlns:att="using:PatchGenerator.AttachedProperties"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PatchGenerator.Views.PatchGenerationView">
+             xmlns:vm="using:PatchGenerator.ViewModels"
+             x:Class="PatchGenerator.Views.PatchGenerationView"
+             x:DataType="vm:PatchGenerationViewModel">
 
   <UserControl.Styles>
     <StyleInclude Source="/Assets/Styles.axaml"/>
@@ -14,7 +16,7 @@
   
   <Grid RowDefinitions="AUTO,*,AUTO,AUTO,AUTO">
 
-    <ItemsControl Items="{Binding PatchItemLegendCollection}">
+    <ItemsControl ItemsSource="{Binding PatchItemLegendCollection}">
       
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -41,7 +43,7 @@
                   ScrollChanged="scrollChanged"
                   att:RandomBoolAttProp.RandomBool="{Binding AutoScroll}"
                   >
-      <ItemsControl Items="{Binding PatchItemCollection}"
+      <ItemsControl ItemsSource="{Binding PatchItemCollection}"
                     Background="Transparent"
                     >
         <ItemsControl.ItemTemplate>

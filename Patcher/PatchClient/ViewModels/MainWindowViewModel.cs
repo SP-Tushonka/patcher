@@ -1,6 +1,7 @@
+using PatcherUtils.Model;
 using Avalonia;
 using ReactiveUI;
-using System.Reactive.Disposables;
+using ReactiveUI.Primitives.Disposables;
 using System.Windows.Input;
 
 namespace PatchClient.ViewModels
@@ -20,9 +21,9 @@ namespace PatchClient.ViewModels
 
         public MainWindowViewModel(bool autoClose, bool debugOutput)
         {
-            this.WhenActivated((CompositeDisposable disposable) =>
+            this.WhenActivated((MultipleDisposable disposable) =>
             {
-                Router.Navigate.Execute(new PatcherViewModel(this, autoClose, debugOutput));
+                Router.Navigate.Execute(new PatcherViewModel(this, autoClose, debugOutput)).Run();
             });
         }
     }

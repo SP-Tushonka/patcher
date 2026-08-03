@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:cc="using:PatchGenerator.CustomControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PatchGenerator.Views.OptionsView">
+             xmlns:vm="using:PatchGenerator.ViewModels"
+             x:Class="PatchGenerator.Views.OptionsView"
+             x:DataType="vm:OptionsViewModel">
   <Grid ColumnDefinitions="2*,10,2*" RowDefinitions="*,10, AUTO, 10, AUTO" Margin="10">
     
       <cc:FolderSelector FolderPath="{Binding GenerationInfo.SourceFolderPath, Mode=TwoWay}"/>

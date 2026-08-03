@@ -5,7 +5,7 @@ using PatchGenerator.Models;
 using PatchGenerator.ViewModels;
 using PatchGenerator.Views;
 using ReactiveUI;
-using System.Reactive;
+using ReactiveUI.Primitives;
 using System;
 using System.Reflection;
 using PatcherUtils.Model;
@@ -17,12 +17,6 @@ namespace PatchGenerator
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>((exception) =>
-            {
-                PatchLogger.LogException(exception);
-            });
-
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -44,10 +38,14 @@ namespace PatchGenerator
             if (sender is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 GenStartupArgs genArgs = GenStartupArgs.Parse(e.Args);
+                MainWindowViewModel viewModel = new MainWindowViewModel(genArgs);
 
+                // ViewModel as well as DataContext: ReactiveUI no longer syncs the two, and without
+                // it the view model never activates, so the router never navigates.
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(genArgs)
+                    DataContext = viewModel,
+                    ViewModel = viewModel
                 };
             }
         }

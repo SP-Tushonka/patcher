@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reactive.Disposables;
+using ReactiveUI.Primitives.Disposables;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -89,7 +89,7 @@ namespace PatchGenerator.ViewModels
                 });
             }
 
-            this.WhenActivated((CompositeDisposable dissposables) =>
+            this.WhenActivated((MultipleDisposable dissposables) =>
             {
                 GeneratePatches();
             });
@@ -187,7 +187,7 @@ namespace PatchGenerator.ViewModels
         {
             Dispatcher.UIThread?.InvokeAsync(() =>
             {
-                if (Application.Current.Resources.TryGetResource("AKI_Brush_Yellow", out var color))
+                if (Application.Current.Resources.TryGetResource("AKI_Brush_Yellow", null, out var color))
                 {
                     if (color is IBrush brush)
                     {

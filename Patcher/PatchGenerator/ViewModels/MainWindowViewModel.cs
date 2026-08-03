@@ -1,8 +1,9 @@
+using PatcherUtils.Model;
 using Avalonia;
 using PatchGenerator.Models;
 using ReactiveUI;
-using System.Reactive;
-using System.Reactive.Disposables;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Disposables;
 
 namespace PatchGenerator.ViewModels
 {
@@ -11,7 +12,7 @@ namespace PatchGenerator.ViewModels
         public RoutingState Router { get; } = new RoutingState();
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
-        public ReactiveCommand<Unit, Unit> CloseCommand => ReactiveCommand.Create(() =>
+        public ReactiveCommand<RxVoid, RxVoid> CloseCommand => ReactiveCommand.Create(() =>
         {
             if (Application.Current.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktopApp)
             {
@@ -21,7 +22,7 @@ namespace PatchGenerator.ViewModels
 
         public MainWindowViewModel(GenStartupArgs genArgs = null)
         {
-            this.WhenActivated((CompositeDisposable disposables) =>
+            this.WhenActivated((MultipleDisposable disposables) =>
             {
                 if (genArgs != null && genArgs.ReadyToRun)
                 {
@@ -32,11 +33,11 @@ namespace PatchGenerator.ViewModels
                     genInfo.PatchName = genArgs.OutputFolderName;
                     genInfo.AutoClose = genArgs.AutoClose;
 
-                    Router.Navigate.Execute(new PatchGenerationViewModel(this, genInfo));
+                    Router.Navigate.Execute(new PatchGenerationViewModel(this, genInfo)).Run();
                     return;
                 }
 
-                Router.Navigate.Execute(new OptionsViewModel(this));
+                Router.Navigate.Execute(new OptionsViewModel(this)).Run();
             });
         }
     }

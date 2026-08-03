@@ -1,3 +1,4 @@
+using PatcherUtils.Model;
 using Avalonia.Threading;
 using ReactiveUI;
 using System;
@@ -36,7 +37,7 @@ namespace PatchClient.ViewModels
         {
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                HostScreen.Router.Navigate.Execute(await ViewModel.WithDelay(Milliseconds));
+                HostScreen.Router.Navigate.Execute(await ViewModel.WithDelay(Milliseconds)).Run();
             });
         }
 
@@ -48,7 +49,7 @@ namespace PatchClient.ViewModels
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                HostScreen.Router.Navigate.Execute(ViewModel);
+                HostScreen.Router.Navigate.Execute(ViewModel).Run();
             });
         }
 
@@ -59,7 +60,7 @@ namespace PatchClient.ViewModels
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                HostScreen.Router.NavigateBack.Execute();
+                HostScreen.Router.NavigateBack.Execute().Run();
             });
         }
 

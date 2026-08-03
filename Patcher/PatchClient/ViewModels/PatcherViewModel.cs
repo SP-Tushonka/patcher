@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reactive.Disposables;
+using ReactiveUI.Primitives.Disposables;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,7 +66,7 @@ namespace PatchClient.ViewModels
             ElapsedPatchTimeDetails = "Starting ...";
             _udpatePatchElapsedTimer.Elapsed += _udpatePatchElapsedTimer_Elapsed;
 
-            this.WhenActivated((CompositeDisposable disposables) =>
+            this.WhenActivated((MultipleDisposable disposables) =>
             {
                 //check if escapefromtarkov.exe is present
                 if(!File.Exists(Path.Join(Directory.GetCurrentDirectory(), "escapefromtarkov.exe")))

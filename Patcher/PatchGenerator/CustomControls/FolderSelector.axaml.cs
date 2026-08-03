@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using System.IO;
 using System.Linq;
 
@@ -23,29 +24,32 @@ namespace PatchGenerator.CustomControls
 
         private void Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.Contains(DataFormats.FileNames))
+            if (!e.DataTransfer.Contains(DataFormat.File))
             {
-                string[] filePaths = e.Data.GetFileNames().ToArray();
+                return;
+            }
 
-                if (filePaths.Length == 1)
-                {
-                    DirectoryInfo folder = new DirectoryInfo(filePaths[0]);
+            string[] filePaths = e.DataTransfer.TryGetFiles()
+                ?.Select(item => item.TryGetLocalPath())
+                .Where(path => !string.IsNullOrEmpty(path))
+                .ToArray() ?? [];
 
-                    if (folder.Exists)
-                    {
-                        FolderPath = filePaths[0];
-                        FolderSelected = true;
-                        return;
-                    }
-
-                    FolderPath = "Dropped object must be a folder";
-                    FolderSelected = false;
-                    return;
-                }
-
+            if (filePaths.Length != 1)
+            {
                 FolderPath = "Cannot drop multiple files";
                 FolderSelected = false;
+                return;
             }
+
+            if (!new DirectoryInfo(filePaths[0]).Exists)
+            {
+                FolderPath = "Dropped object must be a folder";
+                FolderSelected = false;
+                return;
+            }
+
+            FolderPath = filePaths[0];
+            FolderSelected = true;
         }
 
         private static readonly StyledProperty<bool> FolderSelectedProperty =
