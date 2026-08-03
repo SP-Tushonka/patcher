@@ -1,4 +1,4 @@
-﻿namespace PatchGenerator.Models
+namespace PatchGenerator.Models
 {
     public class GenStartupArgs
     {
@@ -10,13 +10,16 @@
 
         public bool Headless { get; private set; } = false;
 
-        protected GenStartupArgs(string outputFolderName, string sourceFolderPath, string targetFolderPath, bool autoClose, bool headless)
+        public bool AutoZip { get; private set; } = true;
+
+        protected GenStartupArgs(string outputFolderName, string sourceFolderPath, string targetFolderPath, bool autoClose, bool headless, bool autoZip)
         {
             OutputFolderName = outputFolderName;
             SourceFolderPath = sourceFolderPath;
             TargetFolderPath = targetFolderPath;
             AutoClose = autoClose;
             Headless = headless;
+            AutoZip = autoZip;
         }
 
         public static GenStartupArgs Parse(string[] Args)
@@ -28,6 +31,7 @@
             string targetFolderPath = "";
             bool autoClose = false;
             bool headless = false;
+            bool autoZip = true;
 
             foreach (string arg in Args)
             {
@@ -57,6 +61,11 @@
                             autoClose = bool.Parse(argSplit[1]);
                             break;
                         }
+                    case "autozip":
+                        {
+                            autoZip = bool.Parse(argSplit[1]);
+                            break;
+                        }
                     case "headless":
                         {
                             headless = bool.Parse(argSplit[1]);
@@ -65,7 +74,7 @@
                 }
             }
 
-            return new GenStartupArgs(outputFolderPath, sourceFolderPath, targetFolderPath, autoClose, headless);
+            return new GenStartupArgs(outputFolderPath, sourceFolderPath, targetFolderPath, autoClose, headless, autoZip);
         }
     }
 }

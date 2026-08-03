@@ -10,16 +10,16 @@
              >
   <UserControl.Styles>
     <Style Selector="Border">
-      <Setter Property="BorderBrush" Value="{StaticResource AKI_Background_Dark}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource SPT_Background_Dark}"/>
       <Setter Property="BorderThickness" Value="2"/>
     </Style>
 
     <Style Selector="Border.folderSelected">
-      <Setter Property="BorderBrush" Value="{StaticResource AKI_Brush_Yellow}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource SPT_Brush_Yellow}"/>
     </Style>
     
     <Style Selector="TextBlock.folderSelected">
-      <Setter Property="Foreground" Value="{StaticResource AKI_Brush_Yellow}"/>
+      <Setter Property="Foreground" Value="{StaticResource SPT_Brush_Yellow}"/>
     </Style>
   </UserControl.Styles>
 

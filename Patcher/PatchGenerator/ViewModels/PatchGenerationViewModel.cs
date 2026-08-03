@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PatchClient.Models;
@@ -135,6 +135,29 @@ namespace PatchGenerator.ViewModels
 
                 PatchGeneration.CopyPatchClient(generationInfo.PatchName);
 
+                if (generationInfo.AutoZip)
+                {
+                    string archiveName = PatchGeneration.ArchiveName(
+                        generationInfo.SourceFolderPath, generationInfo.TargetFolderPath);
+
+                    AddPatchItem($"Zipping to {archiveName}.7z ...");
+
+                    ProgressMessage = $"Zipping {archiveName}.7z";
+                    PatchPercent = 0;
+
+                    var zipProgress = new Progress<int>(percent => PatchPercent = percent);
+
+                    string archivePath = PatchGeneration.CompressOutput(
+                        generationInfo.PatchName, archiveName, zipProgress);
+
+                    PatchPercent = 100;
+                    ProgressMessage = sb.ToString();
+
+                    AddPatchItem(archivePath != null
+                        ? $"Zipping complete: {archiveName}.7z"
+                        : "Zipping failed - see the log");
+                }
+
                 if (generationInfo.AutoClose)
                 {
                     Environment.Exit((int)PatcherExitCode.Success);
@@ -168,6 +191,29 @@ namespace PatchGenerator.ViewModels
             });
         }
 
+        /// <summary>
+        /// Append a highlighted line to the progress list from a background thread.
+        /// </summary>
+        private void AddPatchItem(string text)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IBrush brush = null;
+
+                if (Application.Current != null &&
+                    Application.Current.Resources.TryGetResource("SPT_Brush_Yellow", null, out var color))
+                {
+                    brush = color as IBrush;
+                }
+
+                PatchItemCollection.Add(new PatchItem("")
+                {
+                    Name = text,
+                    Color = brush ?? PatchItemDefinitions.Colors["exists"]
+                });
+            });
+        }
+
         private bool ShouldRefreshUi(bool force)
         {
             long now = Environment.TickCount64;
@@ -187,7 +233,7 @@ namespace PatchGenerator.ViewModels
         {
             Dispatcher.UIThread?.InvokeAsync(() =>
             {
-                if (Application.Current.Resources.TryGetResource("AKI_Brush_Yellow", null, out var color))
+                if (Application.Current.Resources.TryGetResource("SPT_Brush_Yellow", null, out var color))
                 {
                     if (color is IBrush brush)
                     {

@@ -6,7 +6,7 @@
              xmlns:self="using:PatchClient.CustomControls"
              x:Class="PatchClient.CustomControls.TitleBar">
 
-  <Grid ColumnDefinitions="AUTO,*,AUTO">
+  <Grid ColumnDefinitions="AUTO,*,AUTO" Background="Transparent">
     <Rectangle Grid.ColumnSpan="3" IsHitTestVisible="False"
                Fill="{Binding Background, RelativeSource={
                       RelativeSource AncestorType=self:TitleBar}}"

@@ -18,6 +18,9 @@
              Watermark="Output Folder Name"
              />
       
+    <CheckBox Content="Zip Generated Files" Grid.Row="4"
+              IsChecked="{Binding GenerationInfo.AutoZip}"/>
+
     <Button Content="Generate Patches" Grid.ColumnSpan="3" Grid.Row="4"
             HorizontalAlignment="Right"
             HorizontalContentAlignment="Center"

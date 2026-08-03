@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using PatchClient.Models;
 using PatcherUtils;
 using ReactiveUI;
@@ -77,7 +77,7 @@ namespace PatchClient.ViewModels
                         return;
                     }
 
-                    NavigateTo(new MessageViewModel(HostScreen, "EscapeFromTarkov.exe was not found. Please ensure you have copied the patcher to your SPT folder."));
+                    NavigateTo(new MessageViewModel(HostScreen, "EscapeFromTarkov.exe was not found. Please ensure you have copied the patcher to your game folder."));
                     return;
                 }
 

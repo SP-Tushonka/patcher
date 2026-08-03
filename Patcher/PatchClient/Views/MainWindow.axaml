@@ -15,7 +15,7 @@
 		ExtendClientAreaToDecorationsHint="True"
         WindowDecorations="None"
 		ExtendClientAreaTitleBarHeightHint="-1"
-    Background="{StaticResource AKI_Background_Light}"
+    Background="{StaticResource SPT_Background_Light}"
 		>
 	<Window.Styles>
 		<StyleInclude Source="/Assets/Styles.axaml"/>

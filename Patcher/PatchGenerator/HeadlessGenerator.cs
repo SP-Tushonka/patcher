@@ -68,6 +68,35 @@ namespace PatchGenerator
 
             PatchGeneration.CopyPatchClient(args.OutputFolderName);
 
+            if (args.AutoZip)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Zipping...");
+
+                int lastPercent = -1;
+                var zipProgress = new Progress<int>(percent =>
+                {
+                    if (percent - lastPercent < 10)
+                    {
+                        return;
+                    }
+
+                    lastPercent = percent;
+                    Console.WriteLine($"[{percent,3}%]");
+                });
+
+                string archiveName = PatchGeneration.ArchiveName(args.SourceFolderPath, args.TargetFolderPath);
+                string archivePath = PatchGeneration.CompressOutput(args.OutputFolderName, archiveName, zipProgress);
+
+                if (archivePath == null)
+                {
+                    Console.Error.WriteLine("Zipping failed - see the log");
+                    return (int)PatcherExitCode.PatchFailed;
+                }
+
+                Console.WriteLine($"Archive: {archivePath}");
+            }
+
             // PatcherExitCode.Success is 10; a shell expects 0.
             return 0;
         }

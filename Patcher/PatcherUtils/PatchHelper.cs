@@ -15,6 +15,8 @@ namespace PatcherUtils
 {
     public class PatchHelper
     {
+        private const string ConsistencyInfoFileName = "ConsistencyInfo";
+
         private string SourceFolder = "";
         private string TargetFolder = "";
         private string DeltaFolder = "";
@@ -383,6 +385,21 @@ namespace PatcherUtils
 
                         string extension = "";
 
+                        // Steam's one differs from BSG, always make a new one out of this.
+                        if (string.Equals(targetFile.Name, ConsistencyInfoFileName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            foundFilesQueue.Enqueue(sourceFile);
+                            PatchLogger.LogInfo("::: Creating .new file :::");
+                            CreateNewFile(targetFile.FullName);
+
+                            Interlocked.Increment(ref newCount);
+
+                            RaiseProgressChanged(Interlocked.Increment(ref filesProcessed), fileCountTotal,
+                                $"{targetFile.FullName.Replace(TargetFolder, "...")}.new", SnapshotGenerationInfo());
+
+                            return;
+                        }
+
                         // if a matching source file was found, check the file hashes and get the delta.
                         // add it to the bag for removal later
                         if (!CompareFileContents(sourceFile.FullName, targetFile.FullName))
@@ -610,8 +627,15 @@ namespace PatcherUtils
 
                                 try
                                 {
-                                    File.Delete(delFilePath);
-                                    PatchLogger.LogInfo($"File removed: {delFilePath}");
+                                    if (File.Exists(delFilePath))
+                                    {
+                                        File.Delete(delFilePath);
+                                        PatchLogger.LogInfo($"File removed: {delFilePath}");
+                                    }
+                                    else
+                                    {
+                                        PatchLogger.LogInfo($"Already absent: {delFilePath}");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {

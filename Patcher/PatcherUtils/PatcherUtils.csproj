@@ -1,20 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <AssemblyVersion>2.15.3</AssemblyVersion>
-    <FileVersion>2.15.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\hdiffz.exe" />
     <EmbeddedResource Include="Resources\hdiffz" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Aki.Common">
-      <HintPath>..\PatchGenerator\References\Aki.Common.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

@@ -49,6 +49,13 @@ namespace PatchGenerator.Models
             }
         }
 
+        private bool _AutoZip = true;
+        public bool AutoZip
+        {
+            get => _AutoZip;
+            set => this.RaiseAndSetIfChanged(ref _AutoZip, value);
+        }
+
         private bool _ReadyToRun = false;
         public bool ReadyToRun
         {
