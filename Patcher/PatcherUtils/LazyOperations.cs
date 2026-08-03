@@ -2,6 +2,7 @@
 using PatcherUtils.Model;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using SevenZip;
 
 namespace PatcherUtils
@@ -24,20 +25,25 @@ namespace PatcherUtils
         /// <summary>
         /// The path to the 7za.exe file in the <see cref="TempDir"/>
         /// </summary>
-        public static string SevenZDllPath = $"{TempDir}\\{SevenZDll}";
+        public static string SevenZDllPath = Path.Combine(TempDir, SevenZDll);
 
         private static string PatcherClient = "PatchClient.exe";
         /// <summary>
         /// The path to the patcher.exe file in the <see cref="TempDir"/>
         /// </summary>
-        public static string PatcherClientPath = $"{TempDir}\\{PatcherClient}";
-
-        private static string HDiffEXE = "hdiffz.exe";
+        public static string PatcherClientPath = Path.Combine(TempDir, PatcherClient);
 
         /// <summary>
-        /// The path to the hdiffz.exe file in the <see cref="TempDir"/>
+        /// The hdiffz binary for the running platform. Patch generation shells out to this; the
+        /// Windows and Linux builds are both embedded so the generator can run on either.
         /// </summary>
-        public static string HDiffPath = $"{TempDir}\\{HDiffEXE}";
+        private static string HDiffEXE =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "hdiffz.exe" : "hdiffz";
+
+        /// <summary>
+        /// The path to the hdiffz file in the <see cref="TempDir"/>
+        /// </summary>
+        public static string HDiffPath = Path.Combine(TempDir, HDiffEXE);
 
         /// <summary>
         /// Streams embedded resources out of the assembly
@@ -66,6 +72,16 @@ namespace PatcherUtils
             {
                 s.CopyTo(fs);
                 PatchLogger.LogInfo($"Resourced streamed out of assembly: {outputFile.Name}");
+            }
+
+            // Extracting an executable does not carry a permission bit, so on unix the freshly
+            // written hdiffz binary is not runnable until we set one.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                File.SetUnixFileMode(OutputFilePath,
+                    UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                    UnixFileMode.GroupRead | UnixFileMode.GroupExecute |
+                    UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
             }
         }
 

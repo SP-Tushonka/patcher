@@ -8,7 +8,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\7z.dll" />
-	<EmbeddedResource Include="Resources\hdiffz.exe" />
+    <EmbeddedResource Include="Resources\hdiffz.exe" />
+    <EmbeddedResource Include="Resources\hdiffz" />
   </ItemGroup>
 
   <ItemGroup>
