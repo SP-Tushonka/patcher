@@ -9,13 +9,19 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace PatchClient.ViewModels
 {
     public class PatcherViewModel : ViewModelBase
     {
+        private const long UiRefreshIntervalMs = 50;
+
+        private long _lastUiRefreshMs;
+
         private bool _initLineItemProgress = true;
         private bool _autoClose = false;
         private bool _debugOutput = false;
@@ -120,7 +126,11 @@ namespace PatchClient.ViewModels
 
                 LazyOperations.CleanupTempDir();
 
-                Directory.Delete(LazyOperations.PatchFolder, true);
+                // Kept on failure so a retry doesn't need the patches downloaded again.
+                if (patchMessage.ExitCode == PatcherExitCode.Success)
+                {
+                    Directory.Delete(LazyOperations.PatchFolder, true);
+                }
 
                 if(_autoClose)
                 {
@@ -133,17 +143,22 @@ namespace PatchClient.ViewModels
 
         private void patcher_ProgressChanged(object Sender, int Progress, int Total, int Percent, string Message = "", params LineItem[] AdditionalLineItems)
         {
+            // Fires once per patch file; marshalling every one floods the dispatcher.
+            if (!ShouldRefreshUi(Progress >= Total))
+            {
+                return;
+            }
+
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (LineItem item in AdditionalLineItems)
                 {
-
                     if (_initLineItemProgress)
                     {
                         LineItems.Add(new LineItemProgress(item));
                     }
 
-                    LineItems.FirstOrDefault(x => x.Info == item.ItemText).UpdateProgress(item.ItemValue);
+                    LineItems.FirstOrDefault(x => x.Info == item.ItemText)?.UpdateProgress(item.ItemValue);
                 }
 
                 _initLineItemProgress = false;
@@ -157,6 +172,21 @@ namespace PatchClient.ViewModels
 
                 ProgressMessage = $"Patching: {Progress} / {Total} - {Percent}%";
             });
+        }
+
+        private bool ShouldRefreshUi(bool force)
+        {
+            long now = Environment.TickCount64;
+            long last = Interlocked.Read(ref _lastUiRefreshMs);
+
+            if (!force && now - last < UiRefreshIntervalMs)
+            {
+                return false;
+            }
+
+            Interlocked.Exchange(ref _lastUiRefreshMs, now);
+
+            return true;
         }
     }
 }

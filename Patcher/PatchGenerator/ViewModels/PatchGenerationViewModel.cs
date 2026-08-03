@@ -24,6 +24,11 @@ namespace PatchGenerator.ViewModels
 {
     public class PatchGenerationViewModel : ViewModelBase
     {
+        private const long UiRefreshIntervalMs = 50;
+        private const int MaxVisiblePatchItems = 200;
+
+        private long lastUiRefreshMs;
+
         private bool _AutoScroll = true;
         public bool AutoScroll
         {
@@ -139,6 +144,12 @@ namespace PatchGenerator.ViewModels
 
         private void Patcher_ProgressChanged(object Sender, int Progress, int Total, int Percent, string Message = "", params LineItem[] AdditionalLineItems)
         {
+            // Fires once per file. Marshalling every one floods the dispatcher on a full install.
+            if (!ShouldRefreshUi(Progress >= Total))
+            {
+                return;
+            }
+
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ProgressMessage = $"{Progress}/{Total}";
@@ -147,8 +158,29 @@ namespace PatchGenerator.ViewModels
 
                 PatchItemCollection.Add(new PatchItem(Message));
 
+                // Bounded so a long run doesn't accumulate thousands of live UI items.
+                while (PatchItemCollection.Count > MaxVisiblePatchItems)
+                {
+                    PatchItemCollection.RemoveAt(0);
+                }
+
                 lineItems = AdditionalLineItems;
             });
+        }
+
+        private bool ShouldRefreshUi(bool force)
+        {
+            long now = Environment.TickCount64;
+            long last = Interlocked.Read(ref lastUiRefreshMs);
+
+            if (!force && now - last < UiRefreshIntervalMs)
+            {
+                return false;
+            }
+
+            Interlocked.Exchange(ref lastUiRefreshMs, now);
+
+            return true;
         }
 
         private void PrintSummary()
