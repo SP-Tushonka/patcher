@@ -37,6 +37,7 @@ namespace PatchGenerator
         public static int Run(GenStartupArgs args)
         {
             AttachToParentConsole();
+            PatchLogger.EchoErrorsToConsole = true;
 
             Console.WriteLine($"Source: {args.SourceFolderPath}");
             Console.WriteLine($"Target: {args.TargetFolderPath}");
