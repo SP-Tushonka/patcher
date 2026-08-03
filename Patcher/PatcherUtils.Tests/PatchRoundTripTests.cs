@@ -6,10 +6,6 @@ using Xunit;
 
 namespace PatcherUtils.Tests;
 
-/// <summary>
-/// End to end coverage for <see cref="PatchHelper"/>: generate a patch set from a source and target
-/// tree, apply it to a copy of the source, and require the result to be byte identical to the target.
-/// </summary>
 public class PatchRoundTripTests : IDisposable
 {
     private readonly string _root;
@@ -49,22 +45,17 @@ public class PatchRoundTripTests : IDisposable
 
         byte[] large = Random(3_000_000, seed: 1);
 
-        // Unchanged on both sides.
         Write(source, "same.dat", Random(50_000, seed: 2));
         Write(target, "same.dat", Random(50_000, seed: 2));
 
-        // Changed, nested.
         Write(source, "Data/Assembly-CSharp.dll", large);
         Write(target, "Data/Assembly-CSharp.dll", Mutate(large, seed: 3));
 
-        // Changed, and named so that naive ".delta" string replacement corrupts the path.
+        // Named so that naive ".delta" string replacement corrupts the path.
         Write(source, "a.b.c/nested.delta.bin", Random(80_000, seed: 4));
         Write(target, "a.b.c/nested.delta.bin", Random(80_000, seed: 5));
 
-        // Present only in the source: must be deleted.
         Write(source, "Data/obsolete.dat", Random(20_000, seed: 6));
-
-        // Present only in the target: must be added.
         Write(target, "Data/brandnew.dat", Random(30_000, seed: 7));
 
         PatchMessage generated = new PatchHelper(source, target, delta).GeneratePatches();
@@ -76,6 +67,35 @@ public class PatchRoundTripTests : IDisposable
         Assert.Equal(PatcherExitCode.Success, applied.ExitCode);
 
         Assert.Equal(HashTree(target), HashTree(install));
+    }
+
+    [Fact]
+    public void GeneratePatches_WritesPatchesWhenFolderPathsAreNotNormalised()
+    {
+        string source = Path.Combine(_root, "source");
+        string target = Path.Combine(_root, "target");
+        string delta = Path.Combine(_root, "delta");
+
+        byte[] original = Random(200_000, seed: 20);
+
+        Write(source, "Data/changed.bin", original);
+        Write(target, "Data/changed.bin", Mutate(original, seed: 21));
+        Write(source, "Data/removed.bin", Random(1000, seed: 22));
+        Write(target, "Data/added.bin", Random(1000, seed: 23));
+
+        string unnormalisedSource = Path.Combine(source, ".");
+        string unnormalisedTarget = Path.Combine(target, ".");
+
+        PatchMessage generated =
+            new PatchHelper(unnormalisedSource, unnormalisedTarget, delta).GeneratePatches();
+
+        Assert.Equal(PatcherExitCode.Success, generated.ExitCode);
+
+        string[] written = Directory.GetFiles(delta, "*", SearchOption.AllDirectories);
+
+        Assert.Contains(written, f => f.EndsWith("changed.bin.delta"));
+        Assert.Contains(written, f => f.EndsWith("added.bin.new"));
+        Assert.Contains(written, f => f.EndsWith("removed.bin.del"));
     }
 
     [Fact]
@@ -106,7 +126,7 @@ public class PatchRoundTripTests : IDisposable
         return buffer;
     }
 
-    /// <summary>Flip a scattered 5% of bytes, so the file still deltas well but is not identical.</summary>
+    // Flip a scattered 5% of bytes, so the file still deltas well but is not identical.
     private static byte[] Mutate(byte[] source, int seed)
     {
         byte[] copy = (byte[])source.Clone();

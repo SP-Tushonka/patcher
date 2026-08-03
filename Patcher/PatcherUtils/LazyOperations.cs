@@ -25,10 +25,6 @@ namespace PatcherUtils
         /// </summary>
         public static string PatcherClientPath = Path.Combine(TempDir, PatcherClient);
 
-        /// <summary>
-        /// The hdiffz binary for the running platform. Patch generation shells out to this; the
-        /// Windows and Linux builds are both embedded so the generator can run on either.
-        /// </summary>
         private static string HDiffEXE =
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "hdiffz.exe" : "hdiffz";
 
@@ -66,8 +62,7 @@ namespace PatcherUtils
                 PatchLogger.LogInfo($"Resourced streamed out of assembly: {outputFile.Name}");
             }
 
-            // Extracting an executable does not carry a permission bit, so on unix the freshly
-            // written hdiffz binary is not runnable until we set one.
+            // Extracted files have no exec bit on unix.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 File.SetUnixFileMode(OutputFilePath,

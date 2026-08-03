@@ -29,6 +29,9 @@ namespace PatcherUtils
 
         private bool debugOutput;
 
+        private int creationFailureCount;
+        private readonly ConcurrentQueue<string> creationFailures = new ConcurrentQueue<string>();
+
         /// <summary>
         /// Reports patch creation or application progress
         /// </summary>
@@ -43,13 +46,8 @@ namespace PatcherUtils
             ProgressChanged?.Invoke(this, progress, total, percent, Message, AdditionalLineItems);
         }
 
-        /// <summary>
-        /// Take an immutable snapshot of the patch generation counters.
-        /// </summary>
-        /// <remarks>
-        /// The handler marshals these onto the UI thread, so they can't be shared objects that the
-        /// patching threads keep mutating afterwards.
-        /// </remarks>
+        // Fresh instances each call: the handler marshals these to the UI thread, so patching
+        // threads must not still be mutating them.
         private LineItem[] SnapshotGenerationInfo() => new[]
         {
             new LineItem("Delta Patch", Volatile.Read(ref deltaCount)),
@@ -58,9 +56,6 @@ namespace PatcherUtils
             new LineItem("File Exists", Volatile.Read(ref existCount))
         };
 
-        /// <summary>
-        /// Take an immutable snapshot of the patch application counters.
-        /// </summary>
         private LineItem[] SnapshotApplyInfo() => new[]
         {
             new LineItem("Patches Remaining", Volatile.Read(ref deltaCount)),
@@ -77,9 +72,10 @@ namespace PatcherUtils
         /// <remarks><paramref name="TargetFolder"/> can be null if you only plan to apply patches.</remarks>
         public PatchHelper(string SourceFolder, string TargetFolder, string DeltaFolder, bool debugOutput = false)
         {
-            this.SourceFolder = SourceFolder;
-            this.TargetFolder = TargetFolder;
-            this.DeltaFolder = DeltaFolder;
+            // Must match DirectoryInfo.FullName, which expands 8.3 names and relative segments.
+            this.SourceFolder = SourceFolder == null ? null : Path.GetFullPath(SourceFolder);
+            this.TargetFolder = TargetFolder == null ? null : Path.GetFullPath(TargetFolder);
+            this.DeltaFolder = DeltaFolder == null ? null : Path.GetFullPath(DeltaFolder);
             this.debugOutput = debugOutput;
         }
 
@@ -92,7 +88,8 @@ namespace PatcherUtils
         /// <returns>A file path inside the delta folder</returns>
         private string GetDeltaPath(string SourceFilePath, string SourceFolderPath, string FileExtension)
         {
-            return Path.Join(DeltaFolder, $"{SourceFilePath.Replace(SourceFolderPath, "")}.{FileExtension}");
+            return Path.Join(DeltaFolder,
+                $"{Path.GetRelativePath(SourceFolderPath, SourceFilePath)}.{FileExtension}");
         }
 
         /// <summary>
@@ -172,27 +169,35 @@ namespace PatcherUtils
         /// <remarks>Used to patch an existing file with xdelta</remarks>
         private void CreateDelta(string SourceFilePath, string TargetFilePath)
         {
-            FileInfo sourceFileInfo = new FileInfo(SourceFilePath);
-
             string deltaPath = GetDeltaPath(SourceFilePath, SourceFolder, "delta");
 
             try
             {
-                Directory.CreateDirectory(deltaPath.Replace(sourceFileInfo.Name + ".delta", ""));
+                Directory.CreateDirectory(Path.GetDirectoryName(deltaPath));
             }
             catch (Exception ex)
             {
                 PatchLogger.LogException(ex);
+                RecordCreationFailure($"[DELTA] {deltaPath}: {ex.Message}");
+                return;
             }
 
             // The parameters we use here are important to allow patch application using the SharpHDiffPatch.Core library, please don't change them
-            Process.Start(new ProcessStartInfo
-                {
-                    FileName = LazyOperations.HDiffPath,
-                    Arguments = $"-s-64 -c-zstd-21-24 -d \"{SourceFilePath}\" \"{TargetFilePath}\" \"{deltaPath}\"",
-                    CreateNoWindow = true
-                })
-                .WaitForExit();
+            using Process hdiff = Process.Start(new ProcessStartInfo
+            {
+                FileName = LazyOperations.HDiffPath,
+                Arguments = $"-s-64 -c-zstd-21-24 -d \"{SourceFilePath}\" \"{TargetFilePath}\" \"{deltaPath}\"",
+                CreateNoWindow = true
+            });
+
+            hdiff.WaitForExit();
+
+            if (hdiff.ExitCode != 0)
+            {
+                PatchLogger.LogError($"hdiffz exited {hdiff.ExitCode} for: {SourceFilePath}");
+                RecordCreationFailure($"[DELTA] hdiffz exited {hdiff.ExitCode}: {SourceFilePath}");
+                return;
+            }
 
             if (File.Exists(deltaPath))
             {
@@ -201,6 +206,7 @@ namespace PatcherUtils
             else
             {
                 PatchLogger.LogError($"File Create failed [DELTA]: {deltaPath}");
+                RecordCreationFailure($"[DELTA] not written: {deltaPath}");
             }
         }
 
@@ -211,27 +217,18 @@ namespace PatcherUtils
         /// <remarks>Used to mark a file for deletion</remarks>
         private void CreateDelFile(string SourceFile)
         {
-            FileInfo sourceFileInfo = new FileInfo(SourceFile);
-
             string deltaPath = GetDeltaPath(SourceFile, SourceFolder, "del");
 
             try
             {
-                Directory.CreateDirectory(deltaPath.Replace(sourceFileInfo.Name + ".del", ""));
-            }
-            catch (Exception ex)
-            {
-                PatchLogger.LogException(ex);
-            }
-
-            try
-            {
+                Directory.CreateDirectory(Path.GetDirectoryName(deltaPath));
                 File.Create(deltaPath).Dispose();
                 PatchLogger.LogInfo($"File Created [DEL]: {deltaPath}");
             }
             catch (Exception ex)
             {
                 PatchLogger.LogException(ex);
+                RecordCreationFailure($"[DEL] {deltaPath}: {ex.Message}");
             }
         }
 
@@ -248,22 +245,21 @@ namespace PatcherUtils
 
             try
             {
-                Directory.CreateDirectory(deltaPath.Replace(targetSourceInfo.Name + ".new", ""));
-            }
-            catch (Exception ex)
-            {
-                PatchLogger.LogException(ex);
-            }
-
-            try
-            {
+                Directory.CreateDirectory(Path.GetDirectoryName(deltaPath));
                 targetSourceInfo.CopyTo(deltaPath, true);
                 PatchLogger.LogInfo($"File Created [NEW]: {deltaPath}");
             }
             catch (Exception ex)
             {
                 PatchLogger.LogException(ex);
+                RecordCreationFailure($"[NEW] {deltaPath}: {ex.Message}");
             }
+        }
+
+        private void RecordCreationFailure(string detail)
+        {
+            Interlocked.Increment(ref creationFailureCount);
+            creationFailures.Enqueue(detail);
         }
 
         /// <summary>
@@ -307,9 +303,8 @@ namespace PatcherUtils
             var targetFiles = targetDir.GetFiles("*", SearchOption.AllDirectories).ToList();
             ConcurrentQueue<FileInfo> foundFilesQueue = new ConcurrentQueue<FileInfo>();
 
-            // Index the source tree by relative path. A linear Find() per target file is O(n^2) and
-            // costs minutes on a full game install. Casing is ignored because the trees being compared
-            // originate from Windows, where a case difference is the same file, not a delete plus add.
+            // Case insensitive: these trees come from Windows, where a case difference is the same
+            // file rather than a delete plus add.
             var sourceFilesByRelativePath = new Dictionary<string, FileInfo>(StringComparer.OrdinalIgnoreCase);
 
             foreach (FileInfo sourceFile in sourceFiles)
@@ -326,6 +321,8 @@ namespace PatcherUtils
             delCount = 0;
             existCount = 0;
             filesProcessed = 0;
+            creationFailureCount = 0;
+            creationFailures.Clear();
 
             RaiseProgressChanged(0, fileCountTotal, "Generating deltas...", SnapshotGenerationInfo());
 
@@ -389,7 +386,6 @@ namespace PatcherUtils
                 int processedQueueCount = 0;
                 int queueTotal = foundFilesQueue.Count;
 
-                // List.Remove per entry is O(n^2) over ~10k files; drop them in a single filtering pass.
                 var matchedSourceFiles = new HashSet<string>(
                     foundFilesQueue.Select(f => f.FullName), StringComparer.OrdinalIgnoreCase);
 
@@ -413,7 +409,7 @@ namespace PatcherUtils
             {
                 PatchLogger.LogInfo("::: Patch Generation Complete :::");
 
-                return new PatchMessage("Generation Done", PatcherExitCode.Success);
+                return GenerationResult();
             }
 
             RaiseProgressChanged(0, sourceFiles.Count, "Processing .del files...", SnapshotGenerationInfo());
@@ -434,7 +430,26 @@ namespace PatcherUtils
 
             PatchLogger.LogInfo("::: Patch Generation Complete :::");
 
-            return new PatchMessage("Generation Done", PatcherExitCode.Success);
+            return GenerationResult();
+        }
+
+        private PatchMessage GenerationResult()
+        {
+            int failures = Volatile.Read(ref creationFailureCount);
+
+            if (failures == 0)
+            {
+                return new PatchMessage("Generation Done", PatcherExitCode.Success);
+            }
+
+            foreach (string failure in creationFailures)
+            {
+                PatchLogger.LogError($"Patch file not created: {failure}");
+            }
+
+            return new PatchMessage(
+                $"{failures} patch file(s) could not be written. The patch set is incomplete - see the log.",
+                PatcherExitCode.PatchFailed);
         }
 
         /// <summary>
@@ -478,7 +493,6 @@ namespace PatcherUtils
 
             PatchLogger.LogInfo($"Patch File Counts: DELTA({deltaCount}) - NEW({newCount}) - DEL({delCount})");
 
-            // Index the install by relative path; a linear Find() per delta is O(n^2) over ~10k files.
             var sourceFilesByRelativePath = new Dictionary<string, FileInfo>(StringComparer.OrdinalIgnoreCase);
 
             foreach (FileInfo sourceFile in SourceFiles)
@@ -597,8 +611,6 @@ namespace PatcherUtils
                 PatchLogger.LogError($"Error queue entry count: {errorsQueue.Count}");
                 PatchLogger.LogError("Dequeuing errors");
                 
-                // Report the first error raised; the rest go to the log. Dequeue everything before
-                // returning, otherwise Count shrinking mid-loop leaves half the errors unlogged.
                 PatchMessage firstError = null;
 
                 while (errorsQueue.TryDequeue(out PatchMessage error))
