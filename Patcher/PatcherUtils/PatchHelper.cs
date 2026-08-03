@@ -203,7 +203,7 @@ namespace PatcherUtils
 
             try
             {
-                File.Create(deltaPath);
+                File.Create(deltaPath).Dispose();
                 PatchLogger.LogInfo($"File Created [DEL]: {deltaPath}");
             }
             catch (Exception ex)
@@ -576,21 +576,17 @@ namespace PatcherUtils
                 PatchLogger.LogError($"Error queue entry count: {errorsQueue.Count}");
                 PatchLogger.LogError("Dequeuing errors");
                 
-                PatchMessage error = null;
-                
-                for (int i = 0; i < errorsQueue.Count; i++)
+                // Report the first error raised; the rest go to the log. Dequeue everything before
+                // returning, otherwise Count shrinking mid-loop leaves half the errors unlogged.
+                PatchMessage firstError = null;
+
+                while (errorsQueue.TryDequeue(out PatchMessage error))
                 {
-                    if (!errorsQueue.TryDequeue(out error))
-                    {
-                        return new PatchMessage(
-                            "Errors occurred during patching, but we couldn't dequeue them :(\n\nThere may be more information in the log",
-                            PatcherExitCode.PatchFailed);
-                    }
-                    
+                    firstError ??= error;
                     PatchLogger.LogError(error.Message);
                 }
 
-                return error ?? new PatchMessage("Something went wrong :(", PatcherExitCode.PatchFailed);
+                return firstError ?? new PatchMessage("Something went wrong :(", PatcherExitCode.PatchFailed);
             }
 
             PatchLogger.LogInfo("::: Patching Complete :::");
