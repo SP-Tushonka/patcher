@@ -5,6 +5,8 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <!-- This exe is copied into every patch archive, so its size is part of every user download. -->
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <CETCompat>false</CETCompat>
+    <PublishReadyToRun>false</PublishReadyToRun>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
