@@ -1,46 +1,75 @@
 # Patcher
 
-Allows for generating and applying patches to software.
-Currently used for downgrading EFT.
+Generates and applies patches between two versions of a folder. Used to downgrade EFT to the client version SPT supports.
+
+## Projects
+
+| Project | What it is |
+|---|---|
+| `PatchGenerator` | Builds a patch from a source and a target folder, with a window or headless |
+| `PatchClient` | `patcher.exe`, applies a patch to a copy of the game |
+| `PatcherUtils` | The patching code both tools share. The SPT installer references it too. |
+| `PatcherUtils.Tests` | xUnit tests for the patching round trip and the logger |
+| `SPT.Theme` | The shared Avalonia theme and fonts, also used by the SPT installer |
 
 ## Requirements
-- .net 8
 
-## Development Stuff
-- VS 2022 w/ Avalonia Extension
-- git-lfs
+- .NET 10 SDK
+- Git LFS. `PatchClient.exe` is stored in LFS.
 
-## PatchClient Parameters
-The patch client only has one parameter at this time (`autoclose`) which can be passed to the patch client like this:
+## Git LFS
 
-(this parameter is not case sensitive)
+LFS files are served from our own server, not GitHub. Every commit has a `.lfsconfig` that points at it:
 
-`patcher.exe autoclose`
+```
+https://lfs.sp-tushonka.com/sp-tushonka/patcher
+```
 
-- AutoClose: Whether or not the patch client should automatically close and return an exit code.
+A normal clone needs nothing extra:
 
-## PatchGenerator Parameters
-Parameters are passed as strings like `param::value`: Example: 
+```bash
+git lfs install
+git clone https://github.com/SP-Tushonka/patcher
+```
 
-(parameters are not case sensitive)
+Downloads need no login. Pushing LFS files asks for your GitHub username and a token with push access to this repository.
 
-`"TargetFolderPath::C:\path\to\folder"`
-- OutputFolderName: The folder to save the generated patches to.
-- SourceFolderPath: The source folder for (the files expected to be patched).
-- TargetFolderPath: The target folder (the expected result of patching).
-- AutoZip: Whether or not the patch generator should automatically compress the patches after generation.
-- AutoClose: Whether or not the patch generator should automatically close and return an exit code.
+## PatchClient parameters
 
-## Exit Codes
+`patcher.exe` takes one optional parameter. It is not case sensitive.
+
+```
+patcher.exe autoclose
+```
+
+- `autoclose`: close when done and return an exit code instead of waiting for the user
+
+## PatchGenerator parameters
+
+Parameters are passed as `name::value`. Names are not case sensitive.
+
+```
+PatchGenerator.exe "SourceFolderPath::C:\EFT\old" "TargetFolderPath::C:\EFT\new" "OutputFolderName::patch" "Headless::true"
+```
+
+- `SourceFolderPath`: the folder the patch is applied to
+- `TargetFolderPath`: the folder the patch turns it into
+- `OutputFolderName`: the folder the patch is written to
+- `AutoZip`: compress the output to a `.7z` archive named `Patcher_<source>_to_<target>`. Defaults to `true`.
+- `AutoClose`: close when done and return an exit code. Defaults to `false`.
+- `Headless`: run without a window and write progress to the console. Defaults to `false`.
+
+## Exit codes
+
 ```cs
 public enum PatcherExitCode
 {
-    ProgramClosed  = 0,  // program was closed by user
+    ProgramClosed  = 0,  // closed by the user
     Success        = 10, // patching or patch generation succeeded
-    EftExeNotFound = 11, // EFT exe was not found during patching (patch client only)
-    NoPatchFolder  = 12, // no patch folder was found during patching (patch client only)
-    MissingFile    = 13, // a matching file could not be found during patching (patch client only) 
-    MissingDir     = 14, // a directory could not be found during patch generation (source/target/output) (patch generator only)
-    PatchFailed    = 15  // a patch file failed (patch client only)
+    EftExeNotFound = 11, // the EFT exe was not found (patch client only)
+    NoPatchFolder  = 12, // no patch folder was found (patch client only)
+    MissingFile    = 13, // a file to patch was not found (patch client only)
+    MissingDir     = 14, // the source, target or output folder was not found (patch generator only)
+    PatchFailed    = 15  // a patch failed to apply, or the output could not be compressed
 }
 ```
