@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="PatchClient/PatchClient.csproj" />
+  <Project Path="PatcherUtils.Tests/PatcherUtils.Tests.csproj" />
+  <Project Path="PatcherUtils/PatcherUtils.csproj" />
+  <Project Path="PatchGenerator/PatchGenerator.csproj" />
+  <Project Path="SPT.Theme/SPT.Theme.csproj" />
+</Solution>

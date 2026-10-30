@@ -99,7 +99,7 @@ namespace PatchGenerator.ViewModels
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ElapsedTimeDetails = $"Elapsed Patch Time: {patchGenStopwatch.Elapsed.ToString("hh':'mm':'ss")}";
+                ElapsedTimeDetails = $"Elapsed {patchGenStopwatch.Elapsed:hh\\:mm\\:ss}";
             });
         }
 
@@ -107,6 +107,7 @@ namespace PatchGenerator.ViewModels
         {
             Task.Run(() =>
             {
+                Dispatcher.UIThread.Post(() => ElapsedTimeDetails = "Elapsed 00:00:00");
                 updateElapsedTimeTimer.Start();
                 patchGenStopwatch.Start();
 
@@ -115,6 +116,10 @@ namespace PatchGenerator.ViewModels
 
                 patchGenStopwatch.Stop();
                 updateElapsedTimeTimer.Stop();
+
+                // The timer ticks once a second, so a short run would otherwise never show its time
+                var took = $"Took {patchGenStopwatch.Elapsed:hh\\:mm\\:ss}";
+                Dispatcher.UIThread.Post(() => ElapsedTimeDetails = took);
 
                 if(message.ExitCode != PatcherExitCode.Success && generationInfo.AutoClose)
                 {
@@ -125,13 +130,9 @@ namespace PatchGenerator.ViewModels
                 PatchLogger.LogInfo("Printing summary info ...");
                 PrintSummary();
 
-                StringBuilder sb = new StringBuilder()
-                .Append("Patches Generated in ")
-                .Append($"{patchGenStopwatch.Elapsed.Hours} hr/s ")
-                .Append($"{patchGenStopwatch.Elapsed.Minutes} min/s ")
-                .Append($"{patchGenStopwatch.Elapsed.Seconds} sec/s");
+                var doneMessage = message.ExitCode == PatcherExitCode.Success ? "Patches generated" : "Generation failed, see the log";
 
-                ProgressMessage = sb.ToString();
+                ProgressMessage = doneMessage;
 
                 PatchGeneration.CopyPatchClient(generationInfo.PatchName);
 
@@ -151,7 +152,7 @@ namespace PatchGenerator.ViewModels
                         generationInfo.PatchName, archiveName, zipProgress);
 
                     PatchPercent = 100;
-                    ProgressMessage = sb.ToString();
+                    ProgressMessage = doneMessage;
 
                     AddPatchItem(archivePath != null
                         ? $"Zipping complete: {archiveName}.7z"
@@ -175,7 +176,7 @@ namespace PatchGenerator.ViewModels
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressMessage = $"{Progress}/{Total}";
+                ProgressMessage = $"Comparing files {Progress:N0} / {Total:N0}";
 
                 PatchPercent = Percent;
 

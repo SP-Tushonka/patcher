@@ -1,0 +1,94 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Shared by the installer and the patcher, so both look the same -->
+    <FontFamily x:Key="ContentControlThemeFontFamily">avares://SPT.Theme/Fonts#Figtree</FontFamily>
+
+    <Color x:Key="Gray950">#030712</Color>
+    <Color x:Key="Gray900">#101828</Color>
+    <Color x:Key="Gray800">#1E2939</Color>
+    <Color x:Key="Gray700">#364153</Color>
+    <Color x:Key="Gray600">#4A5565</Color>
+    <Color x:Key="Gray500">#6A7282</Color>
+    <Color x:Key="Gray400">#99A1AF</Color>
+    <Color x:Key="Gray300">#D1D5DC</Color>
+    <Color x:Key="Gray200">#E5E7EB</Color>
+    <Color x:Key="Gray100">#F3F4F6</Color>
+    <Color x:Key="Cyan700">#007595</Color>
+    <Color x:Key="Cyan600">#0092B8</Color>
+    <Color x:Key="Cyan500">#00B8DB</Color>
+    <Color x:Key="Slate700">#314158</Color>
+    <Color x:Key="Slate600">#45556C</Color>
+    <Color x:Key="Slate300">#CAD5E2</Color>
+
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}" />
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}" />
+    <SolidColorBrush x:Key="Gray800Brush" Color="{StaticResource Gray800}" />
+    <SolidColorBrush x:Key="Gray700Brush" Color="{StaticResource Gray700}" />
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}" />
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}" />
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}" />
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}" />
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
+    <SolidColorBrush x:Key="Slate700Brush" Color="{StaticResource Slate700}" />
+    <SolidColorBrush x:Key="Slate600Brush" Color="{StaticResource Slate600}" />
+    <SolidColorBrush x:Key="Slate300Brush" Color="{StaticResource Slate300}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Cyan500}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#05DF72" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FDC700" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#FF6467" />
+    <SolidColorBrush x:Key="SubtleBrush" Color="#80364153" />
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Cyan700}" />
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{StaticResource Cyan600}" />
+    <SolidColorBrush x:Key="NoticeBrush" Color="#E17100" />
+    <SolidColorBrush x:Key="DangerCardBrush" Color="#C10007" />
+    <SolidColorBrush x:Key="BadgeBrush" Color="#008236" />
+    <SolidColorBrush x:Key="BadgeTextBrush" Color="#DCFCE7" />
+
+    <LinearGradientBrush x:Key="NavBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="{StaticResource Gray900}" />
+        <GradientStop Offset="0.5" Color="#000000" />
+        <GradientStop Offset="1" Color="{StaticResource Gray950}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="TileBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="{StaticResource Gray800}" />
+        <GradientStop Offset="0.5" Color="{StaticResource Gray900}" />
+        <GradientStop Offset="1" Color="#000000" />
+    </LinearGradientBrush>
+    
+    <Color x:Key="SystemAccentColor">#0092B8</Color>
+    <Color x:Key="SystemAccentColorDark1">#007595</Color>
+    <Color x:Key="SystemAccentColorLight1">#00B8DB</Color>
+
+    <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{StaticResource Gray800}" />
+    <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource Gray700}" />
+    <Thickness x:Key="ComboBoxDropdownBorderPadding">0</Thickness>
+    <CornerRadius x:Key="OverlayCornerRadius">12</CornerRadius>
+
+    <!-- Material Design Icons, Apache 2.0 -->
+    <StreamGeometry x:Key="IconCheck">M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z</StreamGeometry>
+    <StreamGeometry x:Key="IconCheckCircle">M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z</StreamGeometry>
+    <StreamGeometry x:Key="IconAlert">M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z</StreamGeometry>
+    <StreamGeometry x:Key="IconCloseCircle">M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z</StreamGeometry>
+    <StreamGeometry x:Key="IconCircleOutline">M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z</StreamGeometry>
+    <StreamGeometry x:Key="IconArrowRight">M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z</StreamGeometry>
+    <StreamGeometry x:Key="IconFolder">M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z</StreamGeometry>
+    <StreamGeometry x:Key="IconDownload">M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z</StreamGeometry>
+    <StreamGeometry x:Key="IconRefresh">M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z</StreamGeometry>
+    <StreamGeometry x:Key="IconCopy">M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z</StreamGeometry>
+    <StreamGeometry x:Key="IconListCheck">M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z</StreamGeometry>
+    <StreamGeometry x:Key="IconInfo">M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z</StreamGeometry>
+    <StreamGeometry x:Key="IconAlertOctagon">M13,13H11V7H13M12,17.3A1.3,1.3 0 0,1 10.7,16A1.3,1.3 0 0,1 12,14.7A1.3,1.3 0 0,1 13.3,16A1.3,1.3 0 0,1 12,17.3M15.73,3H8.27L3,8.27V15.73L8.27,21H15.73L21,15.73V8.27L15.73,3Z</StreamGeometry>
+    <StreamGeometry x:Key="IconDelete">M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z</StreamGeometry>
+    <StreamGeometry x:Key="IconCog">M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z</StreamGeometry>
+
+    <PathGeometry x:Key="Bug"
+                  Figures="m 12.25 0 a 0.75 0.75 0 0 1 0.743 0.648 L 13 0.75 v 0.752 c 0 0.633 -0.196 1.22 -0.53 1.704 a 3.75 3.75 0 0 1 2.521 3.29 h 0.256 a 2.25 2.25 0 0 0 2.24 -2.259 L 17.481 2.752 a 0.750006 0.750006 0 0 1 1.5 -0.006 l 0.007 1.485 a 3.75 3.75 0 0 1 -3.536 3.76 L 15.238 7.997 L 15 7.996 v 1.502 h 4.253 a 0.75 0.75 0 0 1 0.743 0.649 l 0.007 0.102 a 0.75 0.75 0 0 1 -0.648 0.743 l -0.102 0.007 H 15 v 1.999 h 0.238 l 0.214 0.007 a 3.75 3.75 0 0 1 3.531 3.56 l 0.005 0.2 l -0.007 1.485 a 0.75 0.75 0 0 1 -1.493 0.095 l -0.007 -0.102 l 0.007 -1.485 a 2.25 2.25 0 0 0 -2.087 -2.253 l -0.154 -0.006 h -0.476 a 5.002 5.002 0 0 1 -9.542 0 H 4.74 A 2.25 2.25 0 0 0 2.5 16.758 l 0.005 1.485 a 0.750008 0.750008 0 1 1 -1.5 0.007 L 1 16.764 a 3.75 3.75 0 0 1 3.535 -3.76 L 4.75 12.999 L 5 12.998 v -2 H 0.75 A 0.75 0.75 0 0 1 0.007 10.35 L 0 10.249 A 0.75 0.75 0 0 1 0.648 9.506 L 0.75 9.499 L 5 9.498 V 7.996 H 4.75 L 4.535 7.991 A 3.75 3.75 0 0 1 1.005 4.431 L 1 4.23 L 1.006 2.745 A 0.75 0.75 0 0 1 2.5 2.649 L 2.506 2.751 L 2.5 4.237 A 2.25 2.25 0 0 0 4.587 6.491 L 4.741 6.497 H 5.009 A 3.753 3.753 0 0 1 7.53 3.205 A 2.968 2.968 0 0 1 7.006 1.711 L 7 1.502 V 0.75 A 0.75 0.75 0 0 1 8.493 0.648 L 8.5 0.75 v 0.752 a 1.5 1.5 0 0 0 2.993 0.145 L 11.5 1.502 V 0.75 A 0.75 0.75 0 0 1 12.25 0 Z"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="Close"
+                  Figures="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="Minimize"
+                  Figures="M3.997 13H20a1 1 0 1 0 0-2H3.997a1 1 0 1 0 0 2Z"
+                  FillRule="NonZero" />
+</ResourceDictionary>

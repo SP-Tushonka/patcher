@@ -9,18 +9,14 @@
         x:Class="PatchGenerator.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="PatchGenerator"
-        Height="400" Width="800"
+        Title="SPT Patch Generator"
+        Height="520" Width="820"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         WindowDecorations="None"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Background="{StaticResource SPT_Background_Light}"
+        Background="{StaticResource Gray800Brush}"
         >
-  <Window.Styles>
-    <StyleInclude Source="/Assets/Styles.axaml"/>
-  </Window.Styles>
-
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>

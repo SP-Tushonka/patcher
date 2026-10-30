@@ -3,34 +3,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:cc="using:PatchGenerator.CustomControls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="460"
              xmlns:vm="using:PatchGenerator.ViewModels"
              x:Class="PatchGenerator.Views.OptionsView"
              x:DataType="vm:OptionsViewModel">
-  <Grid ColumnDefinitions="2*,10,2*" RowDefinitions="*,10, AUTO, 10, AUTO" Margin="10">
-    
-      <cc:FolderSelector FolderPath="{Binding GenerationInfo.SourceFolderPath, Mode=TwoWay}"/>
-      <cc:FolderSelector Grid.Column="2"
-                         FolderPath="{Binding GenerationInfo.TargetFolderPath, Mode=TwoWay}"/>
-    
-    <TextBox Text="{Binding GenerationInfo.PatchName}"
-             Grid.Row="2" Grid.ColumnSpan="3"
-             Watermark="Output Folder Name"
-             />
-      
-    <CheckBox Content="Zip Generated Files" Grid.Row="4"
-              IsChecked="{Binding GenerationInfo.AutoZip}"/>
 
-    <Button Content="Generate Patches" Grid.ColumnSpan="3" Grid.Row="4"
-            HorizontalAlignment="Right"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            FontSize="15"
-            FontWeight="SemiBold"
-            Height="50"
-            Width="200"
-            Command="{Binding GeneratePatches}"
-            IsEnabled="{Binding GenerationInfo.ReadyToRun}"
-            />
-  </Grid>
+    <Border Classes="content">
+        <Border Classes="panel" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Classes="h2" Text="Generate patches" />
+                <TextBlock Classes="body" Margin="0 0 0 14" TextWrapping="Wrap"
+                           Text="Pick the game build you patch from and the build you patch to. Drop each folder on its box or browse for it." />
+
+                <Grid ColumnDefinitions="*,12,*" Height="120">
+                    <cc:FolderSelector Label="From (source build)"
+                                       FolderPath="{Binding GenerationInfo.SourceFolderPath, Mode=TwoWay}" />
+                    <cc:FolderSelector Grid.Column="2" Label="To (target build)"
+                                       FolderPath="{Binding GenerationInfo.TargetFolderPath, Mode=TwoWay}" />
+                </Grid>
+
+                <TextBlock Classes="label" Text="Output folder name" Margin="0 16 0 6" />
+                <TextBox Text="{Binding GenerationInfo.PatchName}" Watermark="Patcher_1.0.0.0_to_0.16.9.5" />
+
+                <Grid ColumnDefinitions="*,Auto" Margin="0 16 0 0">
+                    <CheckBox Content="Zip the generated files" VerticalAlignment="Center"
+                              IsChecked="{Binding GenerationInfo.AutoZip}" />
+                    <Button Grid.Column="1" Classes="primary" Content="Generate patches"
+                            Command="{Binding GeneratePatches}"
+                            IsEnabled="{Binding GenerationInfo.ReadyToRun}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Border>
 </UserControl>

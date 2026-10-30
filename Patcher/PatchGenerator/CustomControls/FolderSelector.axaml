@@ -2,38 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:self="using:PatchGenerator.CustomControls"
+             mc:Ignorable="d" d:DesignWidth="380" d:DesignHeight="120"
              x:Class="PatchGenerator.CustomControls.FolderSelector"
+             x:Name="Root"
              DragDrop.AllowDrop="True"
-             Background="Transparent"
-             >
-  <UserControl.Styles>
-    <Style Selector="Border">
-      <Setter Property="BorderBrush" Value="{StaticResource SPT_Background_Dark}"/>
-      <Setter Property="BorderThickness" Value="2"/>
-    </Style>
+             Background="Transparent">
 
-    <Style Selector="Border.folderSelected">
-      <Setter Property="BorderBrush" Value="{StaticResource SPT_Brush_Yellow}"/>
-    </Style>
-    
-    <Style Selector="TextBlock.folderSelected">
-      <Setter Property="Foreground" Value="{StaticResource SPT_Brush_Yellow}"/>
-    </Style>
-  </UserControl.Styles>
-
-  <Border Classes.folderSelected="{Binding FolderSelected, RelativeSource={
-                                   RelativeSource AncestorType=self:FolderSelector}}">
-    
-    <TextBlock Text="{Binding FolderPath, RelativeSource={
-                      RelativeSource AncestorType=self:FolderSelector}}"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Classes.folderSelected="{Binding FolderSelected, RelativeSource={
-                                        RelativeSource AncestorType=self:FolderSelector}}"
-               TextWrapping="Wrap"
-               />
-  </Border>
-  
+    <Border Classes="drop" Classes.selected="{Binding #Root.FolderSelected}"
+            BorderThickness="1" CornerRadius="12" Padding="16 12">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <TextBlock Classes="label" Text="{Binding #Root.Label}" />
+            <TextBlock Grid.Row="1" Classes="mono muted" Text="{Binding #Root.FolderPath}" TextWrapping="Wrap"
+                       VerticalAlignment="Center" Margin="0 6" />
+            <Button Grid.Row="2" Classes="link" Content="Browse" HorizontalAlignment="Left" Click="Browse" />
+        </Grid>
+    </Border>
 </UserControl>

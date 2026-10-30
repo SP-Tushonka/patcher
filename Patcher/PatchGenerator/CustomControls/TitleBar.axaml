@@ -2,45 +2,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:self="using:PatchGenerator.CustomControls"
-             x:Class="PatchGenerator.CustomControls.TitleBar">
+             mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="56"
+             x:Class="PatchGenerator.CustomControls.TitleBar"
+             x:Name="Root">
 
-  <Grid ColumnDefinitions="AUTO,*,AUTO" Background="Transparent">
-    <Rectangle Grid.ColumnSpan="3" IsHitTestVisible="False"
-               Fill="{Binding Background, RelativeSource={
-                      RelativeSource AncestorType=self:TitleBar}}"
-                 />
-    <Label Content="{Binding Title, RelativeSource={
-			               RelativeSource AncestorType=self:TitleBar}}"
-           IsHitTestVisible="False"
-           Foreground="{Binding Foreground, RelativeSource={
-			                  RelativeSource AncestorType=self:TitleBar}}"
-           Background="Transparent"
-           VerticalContentAlignment="Center"
-			     />
-    <Button Content="&#xE106;" Grid.Column="2"
-            Foreground="{Binding XButtonForeground, RelativeSource={
-												 RelativeSource AncestorType=self:TitleBar}}"
-            Command="{Binding XButtonCommand, RelativeSource={
-			                RelativeSource AncestorType=self:TitleBar}}"
-            Background="Transparent"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            VerticalAlignment="Stretch"
-            FontFamily="Segoe MDL2 Assets"
-            CornerRadius="0"
-            Width="35"
-            >
-      <Button.Styles>
-        <Style Selector="Button:pointerover /template/ ContentPresenter">
-          <Setter Property="Background" Value="IndianRed"/>
-        </Style>
-        <Style Selector="Button:pressed /template/ ContentPresenter">
-          <Setter Property="Background" Value="Crimson"/>
-        </Style>
-      </Button.Styles>
-    </Button>
-  </Grid>
+    <!-- Same bar as the installer's and the patcher's. Transparent rather than unset, so the drag sees the press. -->
+    <Border Background="{StaticResource NavBrush}" BorderBrush="{StaticResource Gray800Brush}" BorderThickness="0 0 0 1"
+            Height="56">
+        <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent">
+            <StackPanel Orientation="Horizontal" Spacing="6" Margin="20 0" VerticalAlignment="Center"
+                        IsHitTestVisible="False">
+                <!-- The SPT mark from the Forge, drawn at the size its navigation uses -->
+                <Image Source="avares://SPT.Theme/Images/spt-small.png" Width="32" Height="17" VerticalAlignment="Center"
+                       RenderOptions.BitmapInterpolationMode="HighQuality" />
+                <TextBlock Text="{Binding #Root.Title}" FontSize="19" FontWeight="ExtraBold" Foreground="White"
+                           VerticalAlignment="Center" />
+            </StackPanel>
 
+            <Button Grid.Column="2" Classes="window" Command="{Binding #Root.XButtonCommand}">
+                <PathIcon Data="{StaticResource Close}" Width="12" Height="12" />
+            </Button>
+        </Grid>
+    </Border>
 </UserControl>

@@ -22,6 +22,25 @@ namespace PatchGenerator.CustomControls
             AvaloniaXamlLoader.Load(this);
         }
 
+        private async void Browse(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var storage = TopLevel.GetTopLevel(this)?.StorageProvider;
+
+            if (storage == null)
+            {
+                return;
+            }
+
+            var folders = await storage.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = Label, AllowMultiple = false });
+            var path = folders.Count == 1 ? folders[0].TryGetLocalPath() : null;
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                FolderPath = path;
+                FolderSelected = true;
+            }
+        }
+
         private void Drop(object sender, DragEventArgs e)
         {
             if (!e.DataTransfer.Contains(DataFormat.File))
@@ -52,13 +71,22 @@ namespace PatchGenerator.CustomControls
             FolderSelected = true;
         }
 
-        private static readonly StyledProperty<bool> FolderSelectedProperty =
+        public static readonly StyledProperty<bool> FolderSelectedProperty =
             AvaloniaProperty.Register<FolderSelector, bool>(nameof(FolderSelected));
 
-        private bool FolderSelected
+        public bool FolderSelected
         {
             get => GetValue(FolderSelectedProperty);
             set => SetValue(FolderSelectedProperty, value);
+        }
+
+        public static readonly StyledProperty<string> LabelProperty =
+            AvaloniaProperty.Register<FolderSelector, string>(nameof(Label));
+
+        public string Label
+        {
+            get => GetValue(LabelProperty);
+            set => SetValue(LabelProperty, value);
         }
 
         public static readonly StyledProperty<string> FolderPathProperty =

@@ -3,76 +3,56 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:model="using:PatchGenerator.Models"
-             xmlns:cc="using:PatchGenerator.CustomControls"
              xmlns:att="using:PatchGenerator.AttachedProperties"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="460"
              xmlns:vm="using:PatchGenerator.ViewModels"
              x:Class="PatchGenerator.Views.PatchGenerationView"
              x:DataType="vm:PatchGenerationViewModel">
 
-  <UserControl.Styles>
-    <StyleInclude Source="/Assets/Styles.axaml"/>
-  </UserControl.Styles>
-  
-  <Grid RowDefinitions="AUTO,*,AUTO,AUTO,AUTO">
+    <Border Classes="content">
+        <Border Classes="panel">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+                <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 8">
+                    <TextBlock Classes="label" Text="{Binding ProgressMessage}" FontSize="15" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1" Classes="mono muted" VerticalAlignment="Center"
+                               Text="{Binding PatchPercent, StringFormat={}{0}%}" />
+                </Grid>
+                <ProgressBar Grid.Row="1" Value="{Binding PatchPercent}" IsIndeterminate="{Binding IndeterminateProgress}" />
+                <TextBlock Grid.Row="2" Classes="mono muted" Margin="0 8 0 0" Text="{Binding ElapsedTimeDetails}" />
 
-    <ItemsControl ItemsSource="{Binding PatchItemLegendCollection}">
-      
-      <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <StackPanel Orientation="Horizontal" Grid.Column="1"
-                      HorizontalAlignment="Center"
-                      Margin="10"
-                      Spacing="30"
-                      />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      
-      <ItemsControl.ItemTemplate>
-        <DataTemplate DataType="{x:Type model:PatchItem}">
-          <StackPanel Orientation="Horizontal" Spacing="5">
-            <Rectangle Fill="{Binding Color}" Height="10" Width="10"/>
-            <TextBlock Text="{Binding Name}"/>
-          </StackPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-      
-    </ItemsControl>
-    
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1"
-                  ScrollChanged="scrollChanged"
-                  att:RandomBoolAttProp.RandomBool="{Binding AutoScroll}"
-                  >
-      <ItemsControl ItemsSource="{Binding PatchItemCollection}"
-                    Background="Transparent"
-                    >
-        <ItemsControl.ItemTemplate>
-          <DataTemplate DataType="{x:Type model:PatchItem}">
-            <TextBlock Text="{Binding Name}"
-                       TextWrapping="Wrap"
-                       Foreground="{Binding Color}"
-                       />
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-        
-      </ItemsControl>
-      
-    </ScrollViewer>
-    
-    <ProgressBar Grid.Row="2" Value="{Binding PatchPercent}" Margin="10"
-                 IsIndeterminate="{Binding IndeterminateProgress}"/>
+                <ItemsControl Grid.Row="3" Margin="0 14 0 8" ItemsSource="{Binding PatchItemLegendCollection}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="18" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:PatchItem}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Fill="{Binding Color}" Width="8" Height="8" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Name}" FontSize="13" Foreground="{StaticResource Gray300Brush}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-    <Grid ColumnDefinitions="AUTO,*,AUTO" Grid.Row="3" Margin="10 0">
-      <Label Content="{Binding ProgressMessage}"/>
-      <Label Content="{Binding PatchPercent, StringFormat={}{0}%}" Grid.Column="2"/>
-    </Grid>
-	  
-	<Label Content="{Binding ElapsedTimeDetails}" Grid.Row="4" HorizontalAlignment="Left" Margin="10"
-		   />
-    
-    <CheckBox Content="AutoScroll" Grid.Row="4" HorizontalAlignment="Right" Margin="10"
-              IsChecked="{Binding AutoScroll}"/>
-    
-    
-  </Grid>
+                <Border Grid.Row="4" Background="{StaticResource Gray900Brush}" CornerRadius="8" Padding="12 8">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" ScrollChanged="scrollChanged"
+                                  att:RandomBoolAttProp.RandomBool="{Binding AutoScroll}">
+                        <ItemsControl ItemsSource="{Binding PatchItemCollection}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type model:PatchItem}">
+                                    <TextBlock Classes="mono" Text="{Binding Name}" TextWrapping="Wrap" FontSize="12"
+                                               Foreground="{Binding Color}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+
+                <CheckBox Grid.Row="5" Content="Follow new lines" HorizontalAlignment="Right" Margin="0 10 0 0"
+                          IsChecked="{Binding AutoScroll}" />
+            </Grid>
+        </Border>
+    </Border>
 </UserControl>

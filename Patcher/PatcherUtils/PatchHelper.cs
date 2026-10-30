@@ -329,6 +329,7 @@ namespace PatcherUtils
                 return new PatchMessage(message, PatcherExitCode.MissingDir);
             }
 
+            // Only generating needs hdiffz. Applying uses SharpHDiffPatch, so it writes nothing to the temp folder.
             LazyOperations.ExtractResourcesToTempDir();
 
             List<FileInfo> sourceFiles = sourceDir.GetFiles("*", SearchOption.AllDirectories).ToList();
@@ -528,8 +529,6 @@ namespace PatcherUtils
                 return new PatchMessage(message, PatcherExitCode.MissingDir);
             }
 
-            LazyOperations.ExtractResourcesToTempDir();
-
             List<FileInfo> SourceFiles = sourceDir.GetFiles("*", SearchOption.AllDirectories).ToList();
 
             List<FileInfo> deltaFiles = deltaDir.GetFiles("*", SearchOption.AllDirectories).ToList();
@@ -552,6 +551,9 @@ namespace PatcherUtils
 
             fileCountTotal = deltaFiles.Count;
             var patchingTokenSource = new CancellationTokenSource();
+
+            // Lets listeners take the full counts as totals before the first file changes them
+            RaiseProgressChanged(0, fileCountTotal, "", SnapshotApplyInfo());
 
             try
             {

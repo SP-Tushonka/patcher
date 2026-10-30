@@ -9,8 +9,8 @@ namespace PatchGenerator.ViewModels
 
         public OptionsViewModel(IScreen Host) : base(Host)
         {
-            GenerationInfo.SourceFolderPath = "Drop SOURCE folder here";
-            GenerationInfo.TargetFolderPath = "Drop TARGET folder here";
+            GenerationInfo.SourceFolderPath = "Drop the folder here";
+            GenerationInfo.TargetFolderPath = "Drop the folder here";
         }
 
         public void GeneratePatches()

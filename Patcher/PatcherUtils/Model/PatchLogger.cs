@@ -21,6 +21,22 @@ namespace PatcherUtils.Model
         /// </summary>
         public static bool EchoErrorsToConsole;
 
+        /// <summary>
+        /// Receives every line instead of Patcher.log, with its level, for hosts that keep their own log such as the installer.
+        /// </summary>
+        public static Action<string, string> Redirect;
+
+        private static void Write(string level, string message)
+        {
+            if (Redirect != null)
+            {
+                Redirect(level, message);
+                return;
+            }
+
+            LogToFile($"{GetTimestamp()}[{level}]: {message}");
+        }
+
         private static void LogToFile(string message)
         {
             // Patching runs on several threads; unsynchronised appends collide and lose lines.
@@ -68,35 +84,22 @@ namespace PatcherUtils.Model
 
         public static void LogOSInfo()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                LogToFile($"{GetTimestamp()}[OS]: Windows");
-
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                LogToFile($"{GetTimestamp()}[OS]: Linux");
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                LogToFile($"{GetTimestamp()}[OS]: OSX");
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-                LogToFile($"{GetTimestamp()}[OS]: FreeBSD");
-
-
-            LogToFile($"{GetTimestamp()}[OS]: {RuntimeInformation.OSDescription}");
+            Write("OS", RuntimeInformation.OSDescription);
         }
 
-        public static void LogDebug(string message) => LogToFile($"{GetTimestamp()}[DEBUG]: {message}");
+        public static void LogDebug(string message) => Write("DEBUG", message);
 
-        public static void LogInfo(string message) => LogToFile($"{GetTimestamp()}[INFO]: {message}");
+        public static void LogInfo(string message) => Write("INFO", message);
 
         public static void LogError(string message)
         {
-            LogToFile($"{GetTimestamp()}[ERROR]: {message}");
+            Write("ERROR", message);
             EchoError($"ERROR: {message}");
         }
 
         public static void LogException(Exception ex)
         {
-            LogToFile($"{GetTimestamp()}[EXCEPTION]: {ex.Message}\n\nStackTrace:\n{ex.StackTrace}");
+            Write("EXCEPTION", $"{ex.Message}\n\nStackTrace:\n{ex.StackTrace}");
             EchoError($"EXCEPTION: {ex.Message}");
         }
     }

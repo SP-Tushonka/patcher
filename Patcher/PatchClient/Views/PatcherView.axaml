@@ -2,53 +2,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:model="using:PatchClient.Models"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:model="using:PatchClient.Models"
+             mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="280"
              xmlns:vm="using:PatchClient.ViewModels"
              x:Class="PatchClient.Views.PatcherView"
              x:DataType="vm:PatcherViewModel">
 
-	<UserControl.Styles>
-		
-		<StyleInclude Source="/Assets/Styles.axaml"/>
-		
-		<Style Selector="Label">
-			<Setter Property="Margin" Value="0 0 0 5"/>
-		</Style>
-		
-	</UserControl.Styles>
+    <Border Classes="content">
+        <Border Classes="panel" VerticalAlignment="Top">
+            <StackPanel>
+                <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 8">
+                    <TextBlock Classes="label" Text="{Binding ProgressMessage}" FontSize="15" />
+                    <TextBlock Grid.Column="1" Classes="mono muted" VerticalAlignment="Center"
+                               Text="{Binding ElapsedPatchTimeDetails}" />
+                </Grid>
+                <ProgressBar Value="{Binding PatchPercent}" />
+                <TextBlock Classes="mono muted" Margin="0 8 0 0" TextTrimming="CharacterEllipsis"
+                           Text="{Binding PatchMessage}" />
 
-	<Grid RowDefinitions="AUTO,AUTO,AUTO,AUTO,AUTO" Margin="10">
+                <Border Classes="divider" Margin="0 14 0 6" />
 
-		<!-- Current Patch Text -->
-		<Label Content="{Binding ProgressMessage}"/>
-		<Label Content="{Binding ElapsedPatchTimeDetails}" HorizontalAlignment="Right"/>
-		<Label Content="{Binding PatchMessage}" Grid.Row="1"
-			   Classes="dark"/>
-		<ProgressBar Grid.Row="2" Value="{Binding PatchPercent}"/>
-
-		<Separator Grid.Row="3"
-				   VerticalAlignment="Bottom"
-				   Height="1"
-				   Margin="0 20"/>
-
-		<!-- Line Item Info -->
-		<ItemsControl ItemsSource="{Binding LineItems}" Grid.Row="4">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate DataType="{x:Type model:LineItemProgress}">
-          <Grid ColumnDefinitions="AUTO,3*,AUTO,*,AUTO">
-						<Label Content="{Binding Info}"
-                   />
-						<Label Content="{Binding ProgressInfo}" Grid.Column="2"
-                   FontSize="12"/>
-						<ProgressBar Value="{Binding Progress}" Grid.Column="4"
-									 Margin="0 0 0 4"
-									 VerticalAlignment="Center"
-									 Width="200" MaxWidth="200"
-									 Classes.done="{Binding Completed}"/>
-          </Grid>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-	</Grid>
+                <ItemsControl ItemsSource="{Binding LineItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:LineItemProgress}">
+                            <Border Classes="divider" Padding="0 7">
+                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                    <TextBlock Text="{Binding Info}" VerticalAlignment="Center"
+                                               Foreground="{StaticResource Gray300Brush}" />
+                                    <TextBlock Grid.Column="1" Classes="muted" Text="{Binding ProgressInfo}"
+                                               FontSize="13" VerticalAlignment="Center" Margin="0 0 12 0" />
+                                    <ProgressBar Grid.Column="2" Value="{Binding Progress}" Width="160"
+                                                 VerticalAlignment="Center" Classes.done="{Binding Completed}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+    </Border>
 </UserControl>

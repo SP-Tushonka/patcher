@@ -38,7 +38,7 @@ namespace PatchClient.Models
 
         public void UpdateProgress(int RemainingCount)
         {
-            if (Completed) return;
+            if (Completed || Total == 0) return;
 
             int processed = Total - RemainingCount;
 
@@ -55,7 +55,16 @@ namespace PatchClient.Models
 
             Total = Item.ItemValue;
 
-            Progress = (int)Math.Floor((double)Item.ItemValue / Total * 100);
+            // A patch with none of this kind starts finished, rather than dividing by zero
+            if (Total == 0)
+            {
+                ProgressInfo = "none";
+                Progress = 100;
+                Completed = true;
+                return;
+            }
+
+            ProgressInfo = $"0 / {Total}";
         }
     }
 }

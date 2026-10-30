@@ -7,10 +7,10 @@ namespace PatchGenerator.Helpers
     {
         public static Dictionary<string, IBrush> Colors = new Dictionary<string, IBrush>()
         {
-            {"delta", Brushes.MediumPurple },
-            {"new", Brushes.Green },
-            {"del", Brushes.IndianRed },
-            {"exists", Brushes.DimGray }
+            {"delta", new SolidColorBrush(Color.Parse("#A684FF")) },
+            {"new", new SolidColorBrush(Color.Parse("#05DF72")) },
+            {"del", new SolidColorBrush(Color.Parse("#FF6467")) },
+            {"exists", new SolidColorBrush(Color.Parse("#6A7282")) }
         };
     }
 }

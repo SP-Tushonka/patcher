@@ -1,0 +1,228 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Text -->
+    <Style Selector="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource Gray200Brush}" />
+    </Style>
+    <Style Selector="Label">
+        <Setter Property="Foreground" Value="{StaticResource Gray200Brush}" />
+    </Style>
+
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource Gray100Brush}" />
+        <Setter Property="Margin" Value="0 0 0 12" />
+    </Style>
+    <Style Selector="TextBlock.label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource Gray100Brush}" />
+    </Style>
+    <Style Selector="TextBlock.body">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="{StaticResource Gray300Brush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource Gray400Brush}" />
+    </Style>
+    <Style Selector="TextBlock.mono">
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- Surfaces -->
+    <Style Selector="Border.content">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+    <Style Selector="Border.panel">
+        <Setter Property="Background" Value="{StaticResource Gray950Brush}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="24" />
+    </Style>
+    <Style Selector="Border.divider">
+        <Setter Property="BorderBrush" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderThickness" Value="0 0 0 1" />
+    </Style>
+    <Style Selector="Border.badge">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="8 4" />
+        <Setter Property="Background" Value="{StaticResource BadgeBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.badge > TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{StaticResource BadgeTextBrush}" />
+    </Style>
+    <Style Selector="Border.badge.danger">
+        <Setter Property="Background" Value="{StaticResource DangerCardBrush}" />
+    </Style>
+    <Style Selector="Border.badge.danger > TextBlock">
+        <Setter Property="Foreground" Value="#FFE2E2" />
+    </Style>
+
+    <!-- Buttons -->
+    <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="12 0" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource Slate700Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Slate600Brush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource Slate600Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Slate600Brush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource Slate700Brush}" />
+    </Style>
+    <Style Selector="Button:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource Slate700Brush}" />
+        <Setter Property="Foreground" Value="{StaticResource Gray500Brush}" />
+    </Style>
+
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="16 0" />
+        <Setter Property="MinHeight" Value="36" />
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryHoverBrush}" />
+    </Style>
+    <Style Selector="Button.primary:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gray700Brush}" />
+        <Setter Property="Foreground" Value="{StaticResource Gray400Brush}" />
+    </Style>
+
+    <Style Selector="Button.link">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{StaticResource Gray200Brush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="ContentTemplate">
+            <DataTemplate>
+                <TextBlock Text="{Binding $parent[Button].Content}" TextDecorations="Underline"
+                           Foreground="{Binding $parent[Button].Foreground}" />
+            </DataTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="Button.link:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style Selector="Button.icon">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource Gray400Brush}" />
+    </Style>
+    <Style Selector="Button.icon:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource SubtleBrush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <!-- Inputs -->
+    <Style Selector="TextBox">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gray700Brush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Foreground" Value="{StaticResource Gray200Brush}" />
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gray600Brush}" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gray500Brush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="TextBox.error /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="#9F0712" />
+    </Style>
+
+    <Style Selector="ComboBox">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gray700Brush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="Padding" Value="10 4" />
+    </Style>
+    
+    <Style Selector="ComboBox">
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource Slate300Brush}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <!-- Set locally so Fluent's selected and hover fills cannot reach it -->
+                <ContentPresenter Name="Row" Background="{TemplateBinding Background}" Padding="16 8"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}" />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ComboBoxItem:pointerover">
+        <Setter Property="Background" Value="#0DFFFFFF" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="ComboBoxItem:selected">
+        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style Selector="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource Gray200Brush}" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+        <Setter Property="Background" Value="{StaticResource Gray800Brush}" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryHoverBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="MinHeight" Value="8" />
+    </Style>
+
+    <!-- A finished counter row, in the installer while patching and in patcher.exe -->
+    <Style Selector="ProgressBar.done">
+        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+    </Style>
+
+    <!-- Status icons in check and step rows -->
+    <Style Selector="PathIcon.state">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+    </Style>
+</Styles>

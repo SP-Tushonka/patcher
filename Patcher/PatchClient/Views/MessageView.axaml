@@ -2,22 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="280"
              xmlns:vm="using:PatchClient.ViewModels"
              x:Class="PatchClient.Views.MessageView"
              x:DataType="vm:MessageViewModel">
 
-	<UserControl.Styles>
-		<StyleInclude Source="/Assets/Styles.axaml"/>
-	</UserControl.Styles>
-	
-	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-     	<Label Content="You can close this window"
-			   FontSize="12" FontWeight="SemiBold"
-			   />
-		<TextBlock Text="{Binding InfoText}" TextWrapping="Wrap"
-				   Classes="yellow"
-				   />
-	</StackPanel>
-	
+    <Border Classes="content">
+        <Border Classes="panel" VerticalAlignment="Top">
+            <StackPanel Spacing="6">
+                <TextBlock Classes="h2" Text="{Binding InfoText}" TextWrapping="Wrap" Margin="0" />
+                <TextBlock Classes="muted" Text="You can close this window" />
+            </StackPanel>
+        </Border>
+    </Border>
 </UserControl>

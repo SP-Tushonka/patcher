@@ -9,18 +9,14 @@
         x:Class="PatchClient.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Patch Client"
-		Height="240" Width="600"
+        Title="SPT Patcher"
+		Height="330" Width="640"
 		WindowStartupLocation="CenterScreen"
 		ExtendClientAreaToDecorationsHint="True"
         WindowDecorations="None"
 		ExtendClientAreaTitleBarHeightHint="-1"
-    Background="{StaticResource SPT_Background_Light}"
+    Background="{StaticResource Gray800Brush}"
 		>
-	<Window.Styles>
-		<StyleInclude Source="/Assets/Styles.axaml"/>
-	</Window.Styles>
-
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
@@ -28,7 +24,7 @@
 	<Grid RowDefinitions="AUTO,*">
 
 
-		<cc:TitleBar Title="Patch Client"
+		<cc:TitleBar Title="Patcher"
 					 XButtonCommand="{Binding CloseCommand}"/>
 
     <rxui:RoutedViewHost Router="{Binding Router}" Grid.Row="1"/>
